@@ -5,7 +5,6 @@ CFLAGS = -Wall -O3 -pedantic -Wshadow -DNDEBUG
 CXXFLAGS = -Wall -O3 -DNDEBUG
 AR = ar
 
-MBS_DIR = /Users/mitko/Code/CPP_code_my/NAO_modules/oru_module
 
 test: 
 	g++ $(CFLAGS) -o a test_igm_3.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
