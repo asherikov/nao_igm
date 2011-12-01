@@ -11,6 +11,7 @@ test:
 
 
 lib:
+	-mkdir obj
 	gcc $(CFLAGS) -c from_LLeg_1.c -o $(OBJ_DIR)/from_LLeg_1.o
 	gcc $(CFLAGS) -c from_RLeg_1.c -o $(OBJ_DIR)/from_RLeg_1.o
 	gcc $(CFLAGS) -c from_LLeg_2.c -o $(OBJ_DIR)/from_LLeg_2.o
