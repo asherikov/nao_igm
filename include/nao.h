@@ -40,7 +40,14 @@ void SetBasePose(double *q, double x, double y, double z, double alpha, double b
 void InitJointAngles(double *q);
 void MatrixPrint(unsigned int m, unsigned int n, double * A, const char * description);
 
-int igm_1(int case_flag, double *LegT, double *TorsoT, double *q);
-int igm_2(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q);
-int igm_3(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q);
-int igm_4(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q, double *q0, double mu);
+enum igmSupportFoot {
+    IGM_SUPPORT_RIGHT = 0,
+    IGM_SUPPORT_LEFT = 1
+};
+
+int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT, double *q);
+int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q);
+int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q);
+int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q, double *q0, double mu);
+
+

@@ -38,7 +38,7 @@
                     err_Torso_yRotation]
     \endverbatim
 
-    \param[in] case_flag If case_flag = 1 LLeg is the support leg, if case_flag = 0 RLeg is the support leg.
+    \param[in] support_foot the support leg.
 
     \param[in] LegT A 4x4 homogeneous matrix specifying the desired posture of the leg not in support.
 
@@ -53,13 +53,11 @@
 
     \par
 
-    \note A*A' is formed using Fortran(dsyrk)
-
     \return int iter - the number of iterations performed until convergence, or -1 if the algorithm
     did not converge within max_iter number of iterations.
 
 */
-int igm_1(int case_flag, double *LegT, double *TorsoT, double *q)
+int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT, double *q)
 {
 
     const int N = 12;
@@ -76,7 +74,7 @@ int igm_1(int case_flag, double *LegT, double *TorsoT, double *q)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (case_flag)
+        if (support_foot == IGM_SUPPORT_LEFT)
             from_LLeg_1(q, LegT, TorsoT, out);
         else
             from_RLeg_1(q, LegT, TorsoT, out);
@@ -116,7 +114,7 @@ int igm_1(int case_flag, double *LegT, double *TorsoT, double *q)
     Z(gamma)) of the foot not in support as well as (x, y, z) position of the CoM, and X(alpha),
     Y(beta) rotation of the torso can be imposed.
 
-    \param[in] case_flag If case_flag = 1 LLeg is the support leg, if case_flag = 0 RLeg is the support leg.
+    \param[in] support_foot the support leg.
 
     \param[in] LegT A 4x4 homogeneous matrix specifying the desired posture of the leg not in support.
 
@@ -133,10 +131,6 @@ int igm_1(int case_flag, double *LegT, double *TorsoT, double *q)
 
     \par
 
-    \note A*A' is formed using Fortran(dsyrk)
-
-    \par
-
     \note J2(1:3,:) is the Jacobian of the Torso position (not the CoM position) w.r.t. joints 0..11.
           Even though this is incorrect, the results seem to be reasonable
           (the real Jacobian of the CoM is used in igm_3(...)).
@@ -147,7 +141,7 @@ int igm_1(int case_flag, double *LegT, double *TorsoT, double *q)
     \note For more details see igm_1
 
 */
-int igm_2(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
+int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q)
 {
 
     const int N = 12;
@@ -164,7 +158,7 @@ int igm_2(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (case_flag)
+        if (support_foot == IGM_SUPPORT_LEFT)
             from_LLeg_2(q, LegT, CoM, RotTorso, out);
         else
             from_RLeg_2(q, LegT, CoM, RotTorso, out);
@@ -204,7 +198,7 @@ int igm_2(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
     Z(gamma)) of the foot not in support as well as (x, y, z) position of the CoM, and X(alpha),
     Y(beta) rotation of the torso can be imposed.
 
-    \param[in] case_flag If case_flag = 1 LLeg is the support leg, if case_flag = 0 RLeg is the support leg.
+    \param[in] support_foot the support leg.
 
     \param[in] LegT A 4x4 homogeneous matrix specifying the desired posture of the leg not in support.
 
@@ -221,10 +215,6 @@ int igm_2(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
 
     \par
 
-    \note A*A' is formed using Fortran(dsyrk)
-
-    \par
-
     \note The difference with igm_3(...) is that here the real Jacobian of the CoM is used
 
     \return int iter - the number of iterations performed until convergence, or -1 if the algorithm
@@ -233,7 +223,7 @@ int igm_2(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
     \note For more details see igm_1
 
 */
-int igm_3(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
+int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q)
 {
 
     const int N = 12;
@@ -250,7 +240,7 @@ int igm_3(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (case_flag)
+        if (support_foot == IGM_SUPPORT_LEFT)
             from_LLeg_3(q, LegT, CoM, RotTorso, out);
         else
             from_RLeg_3(q, LegT, CoM, RotTorso, out);
@@ -286,7 +276,7 @@ int igm_3(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q)
 
 
 
-int igm_4(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q, double *q0, double mu)
+int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q, double *q0, double mu)
 {
 
     const int M = 12;
@@ -309,7 +299,7 @@ int igm_4(int case_flag, double *LegT, double *CoM, double *RotTorso, double *q,
             z(i) = mu*(q[i] - q0[i]);
 
         // Form data
-        if (case_flag)
+        if (support_foot == IGM_SUPPORT_LEFT)
             from_LLeg_4(q, LegT, CoM, RotTorso, out);
         else
             from_RLeg_4(q, LegT, CoM, RotTorso, out);

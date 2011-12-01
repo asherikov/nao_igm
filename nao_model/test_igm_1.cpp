@@ -56,9 +56,9 @@ int main(int argc, char** argv)
     double TorsoT[4*4];
     double Tc[4*4];
     int iter;
-    int case_flag = 0;
+    igmSupportFoot support_foot = IGM_SUPPORT_RIGHT;
 
-    if (case_flag) // LLeg is the base
+    if (support_foot) // LLeg is the base
     {
         LLeg2RLeg(q,Tc);
         PostureOffset(Tc, LegT, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
         //MatrixPrint(4,4,LegT,"LegT");
         //MatrixPrint(4,4,TorsoT,"TorsoT");
 
-        iter = igm_1(case_flag, LegT, TorsoT, q);
+        iter = igm_1(support_foot, LegT, TorsoT, q);
     }
     else // RLeg is the base
     {
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
         //MatrixPrint(4,4,LegT,"LegT");
         //MatrixPrint(4,4,TorsoT,"TorsoT");
 
-        iter = igm_1(case_flag, LegT, TorsoT, q);
+        iter = igm_1(support_foot, LegT, TorsoT, q);
     }
 
     MatrixPrint(1,12,q,"q");
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
         for (int j=0; j<nJ+3+nR; j++) // every time start from q0
             q[j] = q0[j];
 
-        iter = igm_1(case_flag, LegT, TorsoT, q);
+        iter = igm_1(support_foot, LegT, TorsoT, q);
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
