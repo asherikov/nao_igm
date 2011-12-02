@@ -7,7 +7,7 @@ AR = ar
 
 
 test: 
-	g++ $(CFLAGS) -o a test_igm_3.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
+	g++ $(CFLAGS) -o a test_igm_3_1.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
 
 
 lib:

@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     // set initial configuration
     double *q0 = new double[nao.state_var_num];
 
-    nao.InitJointAngles();
+    nao.initJointAngles();
     nao.q[24] = 0.0;
     nao.q[25] = 0.05;
     nao.q[26] = 0.0;

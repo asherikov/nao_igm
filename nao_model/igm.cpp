@@ -53,7 +53,7 @@ nao_igm::~nao_igm()
                     err_Torso_yRotation]
     \endverbatim
 
-    \param[in] support_foot the support leg.
+    \param[in] sup_foot the support leg.
 
     \param[in] LegT A 4x4 homogeneous matrix specifying the desired posture of the leg not in support.
 
@@ -72,7 +72,7 @@ nao_igm::~nao_igm()
     did not converge within max_iter number of iterations.
 
 */
-int nao_igm::igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT)
+int nao_igm::igm_1(igmSupportFoot sup_foot, double *LegT, double *TorsoT)
 {
 
     const int N = 12;
@@ -89,7 +89,7 @@ int nao_igm::igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
+        if (sup_foot == IGM_SUPPORT_LEFT)
             from_LLeg_1(q, LegT, TorsoT, out);
         else
             from_RLeg_1(q, LegT, TorsoT, out);
@@ -128,7 +128,7 @@ int nao_igm::igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT)
     Z(gamma)) of the foot not in support as well as (x, y, z) position of the CoM, and X(alpha),
     Y(beta) rotation of the torso can be imposed.
 
-    \param[in] support_foot the support leg.
+    \param[in] sup_foot the support leg.
 
     \param[in] LegT A 4x4 homogeneous matrix specifying the desired posture of the leg not in support.
 
@@ -155,7 +155,7 @@ int nao_igm::igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT)
     \note For more details see igm_1
 
 */
-int nao_igm::igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso)
+int nao_igm::igm_2(igmSupportFoot sup_foot, double *LegT, double *CoM, double *RotTorso)
 {
 
     const int N = 12;
@@ -172,7 +172,7 @@ int nao_igm::igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, doubl
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
+        if (sup_foot == IGM_SUPPORT_LEFT)
             from_LLeg_2(q, LegT, CoM, RotTorso, out);
         else
             from_RLeg_2(q, LegT, CoM, RotTorso, out);
@@ -211,7 +211,7 @@ int nao_igm::igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, doubl
     Z(gamma)) of the foot not in support as well as (x, y, z) position of the CoM, and X(alpha),
     Y(beta) rotation of the torso can be imposed.
 
-    \param[in] support_foot the support leg.
+    \param[in] sup_foot the support leg.
 
     \param[in] LegT A 4x4 homogeneous matrix specifying the desired posture of the leg not in support.
 
@@ -235,8 +235,9 @@ int nao_igm::igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, doubl
 
     \note For more details see igm_1
 
+    @todo Some parameters are defined in the class, probably we do not need to specify them explicitly.
 */
-int nao_igm::igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso)
+int nao_igm::igm_3(igmSupportFoot sup_foot, double *LegT, double *CoM, double *RotTorso)
 {
 
     const int N = 12;
@@ -253,7 +254,7 @@ int nao_igm::igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, doubl
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
+        if (sup_foot == IGM_SUPPORT_LEFT)
             from_LLeg_3(q, LegT, CoM, RotTorso, out);
         else
             from_RLeg_3(q, LegT, CoM, RotTorso, out);
@@ -288,7 +289,7 @@ int nao_igm::igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, doubl
 
 
 
-int nao_igm::igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q0, double mu)
+int nao_igm::igm_4(igmSupportFoot sup_foot, double *LegT, double *CoM, double *RotTorso, double *q0, double mu)
 {
 
     const int M = 12;
@@ -311,7 +312,7 @@ int nao_igm::igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, doubl
             z(i) = mu*(q[i] - q0[i]);
 
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
+        if (sup_foot == IGM_SUPPORT_LEFT)
             from_LLeg_4(q, LegT, CoM, RotTorso, out);
         else
             from_RLeg_4(q, LegT, CoM, RotTorso, out);
@@ -450,6 +451,43 @@ void nao_igm::RotationOffset(double *Rc, double *Rd, double alpha, double beta, 
 }
 
 
+void nao_igm::init(igmSupportFoot sup_foot, double *sup_position, double *sup_orientation)
+{
+    initJointAngles();
+
+    for (int i = SUPPORT_FOOT_POS_START; 
+            i < SUPPORT_FOOT_POS_START + SUPPORT_FOOT_POS_NUM; 
+            i++)
+    {
+        q[i] = sup_position[i - SUPPORT_FOOT_POS_START];
+    }
+
+    for (int i = SUPPORT_FOOT_ORIENTATION_START; 
+            i < SUPPORT_FOOT_ORIENTATION_START + SUPPORT_FOOT_ORIENTATION_NUM; 
+            i++)
+    {
+        q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
+    }
+
+
+    support_foot = sup_foot;
+    double torso_posture[POSTURE_MATRIX_SIZE];
+    if (support_foot == IGM_SUPPORT_LEFT)
+    {
+        LLeg2RLeg(q, swing_foot_posture);
+        LLeg2Torso(q, torso_posture);
+        LLeg2CoM(q, CoM_position);
+    }
+    else
+    {
+        RLeg2LLeg(q, swing_foot_posture);
+        RLeg2Torso(q, torso_posture);
+        RLeg2CoM(q, CoM_position);
+    }
+    T2Rot(torso_posture, torso_orientation);
+}
+
+
 /** \brief Sets the initial configuration of nao (lets call it the standard initial configuration)
 
     \param[out] q Joint angles
@@ -459,7 +497,7 @@ void nao_igm::RotationOffset(double *Rc, double *Rd, double alpha, double beta, 
     \return void
 
 */
-void nao_igm::InitJointAngles()
+void nao_igm::initJointAngles()
 {
     // LEFT LEG
     q[L_HIP_YAW_PITCH] =  0.0;

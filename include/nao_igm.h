@@ -4,6 +4,8 @@
  * @date 02.12.2011 15:17:52 MSK
 @todo Add CheckJointLimits()
 @todo Remove different variants of igm.
+@todo Documentation.
+@todo Add const qualifiers.
  */
 
 
@@ -20,6 +22,9 @@
  * DEFINES
  ****************************************/
 
+#define POSTURE_MATRIX_SIZE 4*4
+#define ORIENTATION_MATRIX_SIZE 3*3
+#define POSITION_VECTOR_SIZE 3
 
 /****************************************
  * TYPEDEFS 
@@ -32,6 +37,7 @@ enum igmSupportFoot {
 
 
 enum supportFootPos {
+    SUPPORT_FOOT_POS_START = 24,
     SUPPORT_FOOT_X = 24,
     SUPPORT_FOOT_Y = 25,
     SUPPORT_FOOT_Z = 26,
@@ -51,22 +57,27 @@ class nao_igm
         nao_igm();
         ~nao_igm();
 
-        void PostureOffset(double *Tc, double *Td, double x, double y, double z, double alpha, double beta, double gamma);
-        void RotationOffset(double *Tc, double *Td, double alpha, double beta, double gamma);
-        void T2Rot(double * T, double *Rot);
-        void SetBasePose(double x, double y, double z, double alpha, double beta, double gamma);
+        void PostureOffset(double *, double *, double, double, double, double, double, double);
+        void RotationOffset(double *, double *, double, double, double);
+        void T2Rot(double *, double *);
+        void SetBasePose(double, double, double, double, double, double);
 
-        void InitJointAngles();
+        void init(igmSupportFoot, double *, double *);
+        void initJointAngles();
 
 
-        int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT);
-        int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso);
-        int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso);
-        int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q0, double mu);
+        int igm_1(igmSupportFoot, double *, double *);
+        int igm_2(igmSupportFoot, double *, double *, double *);
+        int igm_3(igmSupportFoot, double *, double *, double *);
+        int igm_4(igmSupportFoot, double *, double *, double *, double *, double);
 
 
         double *q;
         int state_var_num;
+        double swing_foot_posture[POSTURE_MATRIX_SIZE];
+        double torso_orientation[ORIENTATION_MATRIX_SIZE];
+        double CoM_position[POSITION_VECTOR_SIZE];
+        igmSupportFoot support_foot;
 };
 
 

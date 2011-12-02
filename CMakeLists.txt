@@ -23,6 +23,8 @@ find_path(EIGEN_INCLUDE_DIRS "Eigen/Dense" PATH_SUFFIXES "eigen2")
 if (EIGEN_INCLUDE_DIRS)
     include_directories ("${EIGEN_INCLUDE_DIRS}")
 endif (EIGEN_INCLUDE_DIRS)
+include_directories ("${PROJECT_SOURCE_DIR}/include")
+
 
 set (IGM_SRC_DIR "${PROJECT_SOURCE_DIR}/nao_model")
 set (IGM_SRC "${IGM_SRC_DIR}/JacCoM.c"
