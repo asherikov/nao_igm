@@ -11,7 +11,9 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "../include/nao.h"
+#include "nao_igm.h"
+#include "util.cpp"
+#include "maple_functions.h"
 
 using namespace std;
 
@@ -21,6 +23,7 @@ extern "C" {
 
 int main(int argc, char** argv)
 {
+    nao_igm nao;
 
     struct timeval start, end;
     double cTime;
@@ -30,27 +33,25 @@ int main(int argc, char** argv)
     const int nR = 9;  // using a rotation matrix
 
     // set initial configuration
-    double q[nJ+3+nR];
-    double q0[nJ+3+nR];
+    double *q0 = new double[nao.state_var_num];
 
-    InitJointAngles(q0);
+    nao.InitJointAngles();
+    nao.q[24] = 0.0;
+    nao.q[25] = 0.05;
+    nao.q[26] = 0.0;
 
-    q0[24] = 0.0;
-    q0[25] = 0.05;
-    q0[26] = 0.0;
+    nao.q[27] = 1.0;
+    nao.q[30] = 0.0;
+    nao.q[33] = 0.0;
+    nao.q[28] = 0.0;
+    nao.q[31] = 1.0;
+    nao.q[34] = 0.0;
+    nao.q[29] = 0.0;
+    nao.q[32] = 0.0;
+    nao.q[35] = 1.0;
 
-    q0[27] = 1.0;
-    q0[30] = 0.0;
-    q0[33] = 0.0;
-    q0[28] = 0.0;
-    q0[31] = 1.0;
-    q0[34] = 0.0;
-    q0[29] = 0.0;
-    q0[32] = 0.0;
-    q0[35] = 1.0;
-
-    for (int i=0; i<nJ+3+nR; i++)
-        q[i] = q0[i];
+    for (int i=0; i<nao.state_var_num; i++)
+        q0[i] = nao.q[i];
 
     double CoM[3];
     double RotTorso[3*3];
@@ -61,33 +62,33 @@ int main(int argc, char** argv)
 
     if (support_foot)
     {
-        LLeg2RLeg(q,Tc);
-        PostureOffset(Tc, LegT, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
+        LLeg2RLeg(nao.q,Tc);
+        nao.PostureOffset(Tc, LegT, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
 
-        LLeg2Torso(q,Tc);
-        T2Rot(Tc, RotTorso);
-        RotationOffset(RotTorso, RotTorso, 0.1,-0.1,0.1); // some offset
+        LLeg2Torso(nao.q,Tc);
+        nao.T2Rot(Tc, RotTorso);
+        nao.RotationOffset(RotTorso, RotTorso, 0.1,-0.1,0.1); // some offset
 
-        LLeg2CoM(q,CoM);
+        LLeg2CoM(nao.q,CoM);
         CoM[0] += 0.03;
         CoM[1] += 0.02;
         CoM[2] -= 0.01;
     }
     else
     {
-        RLeg2LLeg(q,Tc);
+        RLeg2LLeg(nao.q,Tc);
 
         MatrixPrint(4,4,Tc,"Tc (p)");
-        PostureOffset(Tc, LegT, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
+        nao.PostureOffset(Tc, LegT, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
         MatrixPrint(4,4,LegT,"Tc (a)");
 
-        RLeg2Torso(q,Tc);
-        T2Rot(Tc, RotTorso);
+        RLeg2Torso(nao.q,Tc);
+        nao.T2Rot(Tc, RotTorso);
         MatrixPrint(3,3,RotTorso,"Rc (p)");
-        RotationOffset(RotTorso, RotTorso, 0.1,-0.1,0.1); // some offset
+        nao.RotationOffset(RotTorso, RotTorso, 0.1,-0.1,0.1); // some offset
         MatrixPrint(3,3,RotTorso,"Rc (a)");
 
-        RLeg2CoM(q,CoM);
+        RLeg2CoM(nao.q,CoM);
         CoM[0] += 0.03;
         CoM[1] += 0.02;
         CoM[2] -= 0.01;
@@ -97,9 +98,9 @@ int main(int argc, char** argv)
     for (int i=0 ; i<test_N ; i++)
     {
         for (int j=0; j<nJ+3+nR; j++) // every time start from q0
-            q[j] = q0[j];
+            nao.q[j] = q0[j];
 
-        iter = igm_3(support_foot, LegT, CoM, RotTorso, q);
+        iter = nao.igm_3(support_foot, LegT, CoM, RotTorso);
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
@@ -107,7 +108,7 @@ int main(int argc, char** argv)
 
     cout << "iter = " << iter << endl;
 
-    MatrixPrint(1,12,q,"q");
+    MatrixPrint(1,12,nao.q,"q");
 
     /*
     double J[3*24];
@@ -120,6 +121,7 @@ int main(int argc, char** argv)
     */
 
     //MatrixPrint(3,12,J,"J CoM");
+    delete q0;
 
     return 0;
 }

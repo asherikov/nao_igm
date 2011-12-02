@@ -1,12 +1,27 @@
-#include <iostream>
+//#include <iostream> // was used in igm_4()
 
-#include <stdio.h>
-#include <math.h>
+#include <math.h> // sqrt
 
-#include "../include/nao.h"
+#include <Eigen/Core>       // Cholesky decomposition + solving
+#include <Eigen/Cholesky>   // of system of linear equations.
 
-#include <Eigen/Core>
-#include <Eigen/Cholesky>
+#include "nao_igm.h"
+#include "joints_sensors_id.h"
+#include "maple_functions.h"
+
+
+nao_igm::nao_igm()
+{
+    state_var_num = JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM;
+    q = new double[state_var_num];
+}
+
+nao_igm::~nao_igm()
+{
+    delete q;
+}
+
+
 
 
 /** \brief Solves the Inverse Geometric Problem (IGM). Constraints for (x, y, z, X(alpha), Y(beta),
@@ -57,7 +72,7 @@
     did not converge within max_iter number of iterations.
 
 */
-int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT, double *q)
+int nao_igm::igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT)
 {
 
     const int N = 12;
@@ -100,7 +115,6 @@ int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT, double *q)
         iter++;
         if (iter > max_iter)
         {
-            printf("The IK routine did not converge in %i iterations. \n", max_iter);
             iter = -1;
         }
     }
@@ -141,7 +155,7 @@ int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT, double *q)
     \note For more details see igm_1
 
 */
-int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q)
+int nao_igm::igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso)
 {
 
     const int N = 12;
@@ -184,7 +198,6 @@ int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTor
         iter++;
         if (iter > max_iter)
         {
-            printf("The IK routine did not converge in %i iterations. \n", max_iter);
             iter = -1;
         }
     }
@@ -223,7 +236,7 @@ int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTor
     \note For more details see igm_1
 
 */
-int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q)
+int nao_igm::igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso)
 {
 
     const int N = 12;
@@ -266,7 +279,6 @@ int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTor
         iter++;
         if (iter > max_iter)
         {
-            printf("The IK routine did not converge in %i iterations. \n", max_iter);
             iter = -1;
         }
     }
@@ -276,7 +288,7 @@ int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTor
 
 
 
-int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q, double *q0, double mu)
+int nao_igm::igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q0, double mu)
 {
 
     const int M = 12;
@@ -325,10 +337,9 @@ int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTor
         iter++;
         if (iter > max_iter)
         {
-            printf("The IK routine did not converge in %i iterations. \n", max_iter);
             iter = -1;
         }
-        std::cout << "iter = " << iter << " norm_dq = " << norm_dq << std::endl;
+        //std::cout << "iter = " << iter << " norm_dq = " << norm_dq << std::endl;
     }
 
     return(iter);
@@ -354,7 +365,7 @@ int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTor
     \return void
 
 */
-void SetBasePose(double *q, double x, double y, double z, double alpha, double beta, double gamma)
+void nao_igm::SetBasePose(double x, double y, double z, double alpha, double beta, double gamma)
 {
     double Rot[3*3];
 
@@ -392,7 +403,7 @@ void SetBasePose(double *q, double x, double y, double z, double alpha, double b
     \return void
 
 */
-void PostureOffset(double *Tc, double *Td,
+void nao_igm::PostureOffset(double *Tc, double *Td,
                    double x, double y, double z, double alpha, double beta, double gamma)
 {
     double tmp[4*4];
@@ -422,7 +433,7 @@ void PostureOffset(double *Tc, double *Td,
     \return void
 
 */
-void RotationOffset(double *Rc, double *Rd, double alpha, double beta, double gamma)
+void nao_igm::RotationOffset(double *Rc, double *Rd, double alpha, double beta, double gamma)
 {
 
     double tmp[3*3];
@@ -448,7 +459,7 @@ void RotationOffset(double *Rc, double *Rd, double alpha, double beta, double ga
     \return void
 
 */
-void InitJointAngles(double *q)
+void nao_igm::InitJointAngles()
 {
     // LEFT LEG
     q[L_HIP_YAW_PITCH] =  0.0;
@@ -487,36 +498,6 @@ void InitJointAngles(double *q)
 
 
 
-/** \brief Print a [m by n] matrix on the screne
-
-    \param[in] m Number of rows
-    \param[in] n Number of columns
-    \param[in] A Matrix of dimension [m by n]
-    \param[in] description A short description of the array (it is printed above the array)
-
-    \note This is the same function as void Matrix_print(unsigned int m, unsigned int n, double * A, const char * description)
-    but I changed the name, because if I link to mbs_simulator, I get duplicate symbols
-
-    \return void
-*/
-void MatrixPrint(unsigned int m, unsigned int n, double * A, const char * description)
-{
-
-    unsigned int  i, j;
-
-    printf(" %s", description);
-    for (i=0; i<m; i++)
-    {
-        printf("\n");
-        for (j=0; j<n; j++)
-            printf("% f ", A[ j*m + i ]);
-    }
-    printf("\n");
-
-}
-
-
-
 /** \brief Extracts the rotation matrix from a 4x4 homogeneous matrix
 
     \param[in] T 4x4 homogeneous matrix.
@@ -524,7 +505,7 @@ void MatrixPrint(unsigned int m, unsigned int n, double * A, const char * descri
 
     \return void
 */
-void T2Rot(double * T, double *Rot)
+void nao_igm::T2Rot(double * T, double *Rot)
 {
     Rot[0] = T[0];
     Rot[3] = T[4];
@@ -535,5 +516,4 @@ void T2Rot(double * T, double *Rot)
     Rot[2] = T[2];
     Rot[5] = T[6];
     Rot[8] = T[10];
-
 }

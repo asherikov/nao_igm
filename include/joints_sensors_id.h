@@ -41,12 +41,8 @@ enum jointSensorIDs {
     HEAD_PITCH          = 22,
     HEAD_YAW            = 23,
 
-//    L_HAND,
-//    R_HAND,
-
-    JOINTS_NUM
+    JOINTS_NUM          = 24
 };
-
 
 #endif // JOINTS_SENSORS_ID_H
 

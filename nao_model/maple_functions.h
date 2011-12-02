@@ -1,6 +1,16 @@
-#define REF(A) &A(0)
+/**
+ * @file
+ * @author Alexander Sherikov
+ * @date 02.12.2011 15:18:26 MSK
+ */
 
-#include "joints_sensors_id.h"
+
+#ifndef MAPLE_FUNCTIONS_H
+#define MAPLE_FUNCTIONS_H
+
+/****************************************
+ * PROTOTYPES 
+ ****************************************/
 
 extern "C" {
   void from_LLeg_1(double *q, double *LetT, double *TorsoT, double *out);
@@ -32,22 +42,5 @@ extern "C" {
   void Euler2Rot(double X, double Y, double Z, double *Rot);
 }
 
-void PostureOffset(double *Tc, double *Td, double x, double y, double z, double alpha, double beta, double gamma);
-void RotationOffset(double *Tc, double *Td, double alpha, double beta, double gamma);
-void T2Rot(double * T, double *Rot);
-void SetBasePose(double *q, double x, double y, double z, double alpha, double beta, double gamma);
-
-void InitJointAngles(double *q);
-void MatrixPrint(unsigned int m, unsigned int n, double * A, const char * description);
-
-enum igmSupportFoot {
-    IGM_SUPPORT_RIGHT = 0,
-    IGM_SUPPORT_LEFT = 1
-};
-
-int igm_1(igmSupportFoot support_foot, double *LegT, double *TorsoT, double *q);
-int igm_2(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q);
-int igm_3(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q);
-int igm_4(igmSupportFoot support_foot, double *LegT, double *CoM, double *RotTorso, double *q, double *q0, double mu);
-
+#endif //MAPLE_FUNCTIONS_H
 
