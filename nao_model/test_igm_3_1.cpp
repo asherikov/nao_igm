@@ -65,6 +65,16 @@ int main(int argc, char** argv)
 
     MatrixPrint(1,12,nao.q,"q");
 
+    int check_bounds = nao.checkJointBounds();
+    if (check_bounds >= 0)
+    {
+        cout << "Bounds are violated! ID:" << check_bounds << endl;
+    }
+    else
+    {
+        cout << "Bounds are ok." << endl;
+    }
+
     delete q0;
 
     return 0;

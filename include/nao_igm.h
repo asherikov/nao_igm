@@ -2,7 +2,6 @@
  * @file
  * @author Alexander Sherikov
  * @date 02.12.2011 15:17:52 MSK
-@todo Add CheckJointLimits()
 @todo Remove different variants of igm.
 @todo Documentation.
 @todo Add const qualifiers.
@@ -16,7 +15,7 @@
  * INCLUDES 
  ****************************************/
 
-
+#include "joints_sensors_id.h"
 
 /****************************************
  * DEFINES
@@ -65,6 +64,8 @@ class nao_igm
         void init(igmSupportFoot, double *, double *);
         void switchSupportFoot();
         void initJointAngles();
+        int checkJointBounds();
+
 
 
         int igm_1(double *, double *);
@@ -74,11 +75,16 @@ class nao_igm
 
 
         double *q;
+        double *q_lower_bound;
+        double *q_upper_bound;
         int state_var_num;
         double swing_foot_posture[POSTURE_MATRIX_SIZE];
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
         igmSupportFoot support_foot;
+
+    private:
+        void setBounds (jointSensorIDs, double, double);
 };
 
 

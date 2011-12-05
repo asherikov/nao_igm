@@ -6,7 +6,6 @@
 #include <Eigen/Cholesky>   // of system of linear equations.
 
 #include "nao_igm.h"
-#include "joints_sensors_id.h"
 #include "maple_functions.h"
 
 
@@ -14,7 +13,45 @@ nao_igm::nao_igm()
 {
     state_var_num = JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM;
     q = new double[state_var_num];
+    q_lower_bound = new double[state_var_num];
+    q_upper_bound = new double[state_var_num];
+
+
+    // LEFT LEG
+    setBounds(L_HIP_YAW_PITCH , -1.145303,  0.740810);
+    setBounds(L_HIP_ROLL      , -0.379472,  0.790477);
+    setBounds(L_HIP_PITCH     , -1.773912,  0.484090);
+    setBounds(L_KNEE_PITCH    , -0.092346,  2.112528);
+    setBounds(L_ANKLE_PITCH   , -1.189516,  0.922747);
+    setBounds(L_ANKLE_ROLL    , -0.769001,  0.397880);
+                              
+    // RIGHT LEG
+    setBounds(R_HIP_YAW_PITCH , -1.145303,  0.740810);
+    setBounds(R_HIP_ROLL      , -0.738321,  0.414754);
+    setBounds(R_HIP_PITCH     , -1.772308,  0.485624);
+    setBounds(R_KNEE_PITCH    , -0.103083,  2.120198);
+    setBounds(R_ANKLE_PITCH   , -1.186448,  0.932056);
+    setBounds(R_ANKLE_ROLL    , -0.388676,  0.785875);
+                              
+    // LEFT ARM
+    setBounds(L_SHOULDER_PITCH, -2.085600,  2.085600);
+    setBounds(L_SHOULDER_ROLL ,  0.008700,  1.649400);
+    setBounds(L_ELBOW_YAW     , -2.085600,  2.085600);
+    setBounds(L_ELBOW_ROLL    , -1.562100, -0.008700);
+    setBounds(L_WRIST_YAW     , -1.823800,  1.823800);
+                              
+    // RIGHT ARM
+    setBounds(R_SHOULDER_PITCH, -2.085600,  2.085600);
+    setBounds(R_SHOULDER_ROLL , -1.649400, -0.008700);
+    setBounds(R_ELBOW_YAW     , -2.085600,  2.085600);
+    setBounds(R_ELBOW_ROLL    ,  0.008700,  1.562100);
+    setBounds(R_WRIST_YAW     , -1.823800,  1.823800);
+                              
+    // HEAD                   
+    setBounds(HEAD_PITCH      , -2.085700,  2.085700);
+    setBounds(HEAD_YAW        , -0.672000,  0.514900);
 }
+
 
 nao_igm::~nao_igm()
 {
@@ -22,7 +59,23 @@ nao_igm::~nao_igm()
 }
 
 
+void nao_igm::setBounds (jointSensorIDs id, double lower_bound, double upper_bound)
+{
+    q_lower_bound[id] = lower_bound;
+    q_upper_bound[id] = upper_bound;
+}
 
+int nao_igm::checkJointBounds()
+{
+    for (int i = 0; i < JOINTS_NUM; i++)
+    {
+        if ((q_lower_bound[i] > q[i]) || (q_upper_bound[i] < q[i]))
+        {
+            return (i);
+        }
+    }
+    return (-1);
+}
 
 /** \brief Solves the Inverse Geometric Problem (IGM). Constraints for (x, y, z, X(alpha), Y(beta),
     Z(gamma)) of the foot not in support as well as (x, y, z, X(alpha), Y(beta)) of the torso can be
