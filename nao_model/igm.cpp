@@ -9,6 +9,9 @@
 #include "maple_functions.h"
 
 
+/**
+ * @brief Constructor
+ */
 nao_igm::nao_igm()
 {
     state_var_num = JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM;
@@ -53,18 +56,40 @@ nao_igm::nao_igm()
 }
 
 
+/**
+ * @brief Constructor
+ */
 nao_igm::~nao_igm()
 {
     delete q;
+    delete q_lower_bound;
+    delete q_upper_bound;
 }
 
 
-void nao_igm::setBounds (jointSensorIDs id, double lower_bound, double upper_bound)
+/**
+ * @brief Set bounds for a joint.
+ *
+ * @param[in] id id of the joint.
+ * @param[in] lower_bound lower bound.
+ * @param[in] upper_bound upper_bound.
+ */
+void nao_igm::setBounds (const jointSensorIDs id, const double lower_bound, const double upper_bound)
 {
     q_lower_bound[id] = lower_bound;
     q_upper_bound[id] = upper_bound;
 }
 
+
+
+/**
+ * @brief Check that all joint angles lie within bounds.
+ *
+ * @return -1 if all values are corrent, id of the first joint violating the
+ * bounds.
+ *
+ * @attention No collision checks!
+ */
 int nao_igm::checkJointBounds()
 {
     for (int i = 0; i < JOINTS_NUM; i++)
@@ -76,6 +101,8 @@ int nao_igm::checkJointBounds()
     }
     return (-1);
 }
+
+
 
 /** \brief Solves the Inverse Geometric Problem (IGM). Constraints for (x, y, z, X(alpha), Y(beta),
     Z(gamma)) of the foot not in support as well as (x, y, z, X(alpha), Y(beta)) of the torso can be
@@ -336,7 +363,19 @@ int nao_igm::igm_3(double *LegT, double *CoM, double *RotTorso)
 
 
 
-int nao_igm::igm_4(double *LegT, double *CoM, double *RotTorso, double *q0, double mu)
+/**
+ * @brief 
+ *
+ * @param[] LegT
+ * @param[] CoM
+ * @param[] RotTorso
+ * @param[] q0
+ * @param[] mu
+ *
+ * @return 
+ * @todo Add description for this function.
+ */
+int nao_igm::igm_4(double *LegT, double *CoM, double *RotTorso, const double *q0, const double mu)
 {
 
     const int M = 12;
@@ -413,7 +452,13 @@ int nao_igm::igm_4(double *LegT, double *CoM, double *RotTorso, double *q0, doub
     \return void
 
 */
-void nao_igm::SetBasePose(double x, double y, double z, double alpha, double beta, double gamma)
+void nao_igm::SetBasePose(
+        const double x, 
+        const double y, 
+        const double z, 
+        const double alpha, 
+        const double beta, 
+        const double gamma)
 {
     double Rot[3*3];
 
@@ -451,8 +496,15 @@ void nao_igm::SetBasePose(double x, double y, double z, double alpha, double bet
     \return void
 
 */
-void nao_igm::PostureOffset(double *Tc, double *Td,
-                   double x, double y, double z, double alpha, double beta, double gamma)
+void nao_igm::PostureOffset(
+        const double *Tc, 
+        double *Td,
+        const double x, 
+        const double y, 
+        const double z, 
+        const double alpha, 
+        const double beta, 
+        const double gamma)
 {
     double tmp[4*4];
     Euler2T(x, y, z, alpha, beta, gamma, tmp);
@@ -481,9 +533,13 @@ void nao_igm::PostureOffset(double *Tc, double *Td,
     \return void
 
 */
-void nao_igm::RotationOffset(double *Rc, double *Rd, double alpha, double beta, double gamma)
+void nao_igm::RotationOffset(
+        const double *Rc, 
+        double *Rd, 
+        const double alpha, 
+        const double beta, 
+        const double gamma)
 {
-
     double tmp[3*3];
 
     Euler2Rot(alpha, beta, gamma, tmp);
@@ -498,7 +554,18 @@ void nao_igm::RotationOffset(double *Rc, double *Rd, double alpha, double beta, 
 }
 
 
-void nao_igm::init(igmSupportFoot support_foot_, double *sup_position, double *sup_orientation)
+
+/**
+ * @brief Initialize model.
+ *
+ * @param[in] support_foot_ current support foot.
+ * @param[in] sup_position position of the support foot.
+ * @param[in] sup_orientation orientation of the supprt foot.
+ */
+void nao_igm::init(
+        const igmSupportFoot support_foot_, 
+        const double *sup_position, 
+        const double *sup_orientation)
 {
     initJointAngles();
 
@@ -535,6 +602,10 @@ void nao_igm::init(igmSupportFoot support_foot_, double *sup_position, double *s
 }
 
 
+/**
+ * @brief 
+ * @todo This one might not be needed.
+ */
 void nao_igm::switchSupportFoot()
 {
     if (support_foot == IGM_SUPPORT_LEFT)
@@ -607,7 +678,7 @@ void nao_igm::initJointAngles()
 
     \return void
 */
-void nao_igm::T2Rot(double * T, double *Rot)
+void nao_igm::T2Rot(const double * T, double *Rot)
 {
     Rot[0] = T[0];
     Rot[3] = T[4];

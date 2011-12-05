@@ -3,8 +3,6 @@
  * @author Alexander Sherikov
  * @date 02.12.2011 15:17:52 MSK
 @todo Remove different variants of igm.
-@todo Documentation.
-@todo Add const qualifiers.
  */
 
 
@@ -56,12 +54,31 @@ class nao_igm
         nao_igm();
         ~nao_igm();
 
-        void PostureOffset(double *, double *, double, double, double, double, double, double);
-        void RotationOffset(double *, double *, double, double, double);
-        void T2Rot(double *, double *);
-        void SetBasePose(double, double, double, double, double, double);
+        void PostureOffset(
+                const double *, 
+                double *, 
+                const double, 
+                const double, 
+                const double, 
+                const double, 
+                const double, 
+                const double);
+        void RotationOffset(
+                const double *, 
+                double *, 
+                const double, 
+                const double, 
+                const double);
+        void T2Rot(const double *, double *);
+        void SetBasePose(
+                const double, 
+                const double, 
+                const double, 
+                const double, 
+                const double, 
+                const double);
 
-        void init(igmSupportFoot, double *, double *);
+        void init(const igmSupportFoot, const double *, const double *);
         void switchSupportFoot();
         void initJointAngles();
         int checkJointBounds();
@@ -71,7 +88,7 @@ class nao_igm
         int igm_1(double *, double *);
         int igm_2(double *, double *, double *);
         int igm_3(double *, double *, double *);
-        int igm_4(double *, double *, double *, double *, double);
+        int igm_4(double *, double *, double *, const double *, const double);
 
 
         double *q;
@@ -84,7 +101,7 @@ class nao_igm
         igmSupportFoot support_foot;
 
     private:
-        void setBounds (jointSensorIDs, double, double);
+        void setBounds (const jointSensorIDs, const double, const double);
 };
 
 
