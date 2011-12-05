@@ -603,8 +603,7 @@ void nao_igm::init(
 
 
 /**
- * @brief 
- * @todo This one might not be needed.
+ * @brief Switch support foot.
  */
 void nao_igm::switchSupportFoot()
 {
