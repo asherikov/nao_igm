@@ -63,13 +63,14 @@ class nao_igm
         void SetBasePose(double, double, double, double, double, double);
 
         void init(igmSupportFoot, double *, double *);
+        void switchSupportFoot();
         void initJointAngles();
 
 
-        int igm_1(igmSupportFoot, double *, double *);
-        int igm_2(igmSupportFoot, double *, double *, double *);
-        int igm_3(igmSupportFoot, double *, double *, double *);
-        int igm_4(igmSupportFoot, double *, double *, double *, double *, double);
+        int igm_1(double *, double *);
+        int igm_2(double *, double *, double *);
+        int igm_3(double *, double *, double *);
+        int igm_4(double *, double *, double *, double *, double);
 
 
         double *q;

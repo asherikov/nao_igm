@@ -41,8 +41,7 @@ int main(int argc, char** argv)
         q0[i] = nao.q[i];
 
 
-    double LegT[POSTURE_MATRIX_SIZE];
-    nao.PostureOffset(nao.swing_foot_posture, LegT, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
+    nao.PostureOffset(nao.swing_foot_posture, nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
     nao.RotationOffset(nao.torso_orientation, nao.torso_orientation, 0.1,-0.1,0.1); // some offset
     nao.CoM_position[0] += 0.03;
     nao.CoM_position[1] += 0.02;
@@ -56,7 +55,7 @@ int main(int argc, char** argv)
         for (int j=0; j<nao.state_var_num; j++) // every time start from q0
             nao.q[j] = q0[j];
 
-        iter = nao.igm_3(nao.support_foot, LegT, nao.CoM_position, nao.torso_orientation);
+        iter = nao.igm_3(nao.swing_foot_posture, nao.CoM_position, nao.torso_orientation);
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
