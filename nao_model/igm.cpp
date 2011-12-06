@@ -448,9 +448,6 @@ int nao_igm::igm_4(double *LegT, double *CoM, double *RotTorso, const double *q0
     \param[in] alpha x-rotation
     \param[in] beta y-rotation
     \param[in] gamma z-rotation
-
-    \return void
-
 */
 void nao_igm::SetBasePose(
         const double x, 
@@ -492,9 +489,6 @@ void nao_igm::SetBasePose(
     \param[in] alpha x-rotation offset
     \param[in] beta y-rotation offset
     \param[in] gamma z-rotation offset
-
-    \return void
-
 */
 void nao_igm::PostureOffset(
         const double *Tc, 
@@ -520,6 +514,35 @@ void nao_igm::PostureOffset(
 
 
 
+/**
+ * @brief Set position in a 4x4 homogenous matrix.
+ *
+ * @param[in,out] Tc 4x4 homogeneous matrix.
+ * @param[in] position 3x1 vector of coordinates.
+ * @param[in] orientation 3x3 rotation matrix.
+ */
+void nao_igm::initPosture (
+        double *Tc, 
+        const double *position,
+        const double *orientation)
+{
+    Tc[12] = position[0];
+    Tc[13] = position[1];
+    Tc[14] = position[2];
+
+    Tc[0]  = orientation[0];
+    Tc[4]  = orientation[3];
+    Tc[8]  = orientation[6];
+    Tc[1]  = orientation[1];
+    Tc[5]  = orientation[4];
+    Tc[9]  = orientation[7];
+    Tc[2]  = orientation[2];
+    Tc[6]  = orientation[5];
+    Tc[10] = orientation[8];
+}
+
+
+
 /** \brief Given a rotation matrix and an offset specified as X(alpha)->Y(beta)->Z(gamma) (current
     axis) Euler angles, returns a rotation matrix Rd that includes the offset.
 
@@ -529,9 +552,6 @@ void nao_igm::PostureOffset(
     \param[in] alpha x-rotation offset
     \param[in] beta y-rotation offset
     \param[in] gamma z-rotation offset
-
-    \return void
-
 */
 void nao_igm::RotationOffset(
         const double *Rc, 
@@ -627,9 +647,6 @@ void nao_igm::switchSupportFoot()
     \param[out] q Joint angles
 
     \note Only q[0]...q[23] are set. The posture of the base is not set.
-
-    \return void
-
 */
 void nao_igm::initJointAngles()
 {
@@ -674,8 +691,6 @@ void nao_igm::initJointAngles()
 
     \param[in] T 4x4 homogeneous matrix.
     \param[out] Rot 3x3 rotation matrix
-
-    \return void
 */
 void nao_igm::T2Rot(const double * T, double *Rot)
 {
@@ -689,3 +704,34 @@ void nao_igm::T2Rot(const double * T, double *Rot)
     Rot[5] = T[6];
     Rot[8] = T[10];
 }
+
+
+/** \brief Forms the rotation matrix corresponding to a set of roll-pitch-yaw angles
+
+    \param[in] roll roll angle [radian]
+    \param[in] pitch pitch angle [radian]
+    \param[in] yaw yaw angle [radian]
+    \param[out] R Rotation matrix corresponding to the roll-pitch-yaw angles
+    
+    \note The rotation defined using roll, pitch and yaw angles is assumed to be formed by first
+    applying a rotation around the x axis (roll), then a rotation around the new y axis (pitch) and
+    finally a rotation around the new z axis (yaw).
+
+    \note The matrix is stored column-wise (Fortran formatting)
+ */
+void nao_igm::rpy2R(const double roll, const double pitch, const double yaw, double *R)
+{
+    double sr = sin(roll);
+    double cr = cos(roll);
+
+    double sp = sin(pitch);
+    double cp = cos(pitch);
+
+    double sy = sin(yaw);
+    double cy = cos(yaw);
+
+    R[0] =  cp*cy;            R[3] = -cp*sy;            R[6] =  sp;
+    R[1] =  sr*sp*cy + cr*sy; R[4] = -sr*sp*sy + cr*cy; R[7] = -sr*cp;
+    R[2] = -cr*sp*cy + sr*sy; R[5] =  cr*sp*sy + sr*cy; R[8] =  cr*cp;
+}
+
