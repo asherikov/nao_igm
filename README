@@ -1,1 +1,5 @@
 Inverse geometrical model for Nao.
+
+Requirements:
+    Eigen v.2
+    GNU make
