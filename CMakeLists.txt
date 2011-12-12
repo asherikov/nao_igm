@@ -6,7 +6,6 @@ project (naoigm C CXX)
 ####################################
 # Settings
 ####################################
-set (CMAKE_BUILD_TYPE "Release") # release by default
 set (CMAKE_SKIP_ASSEMBLY_SOURCE_RULES ON)
 set (CMAKE_SKIP_PREPROCESSED_SOURCE_RULES ON)
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/")

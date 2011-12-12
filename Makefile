@@ -4,6 +4,13 @@ LIB_DIR = ./lib
 DOC_DIR = ./doc
 
 
+ifdef DEBUG
+CMAKEFLAGS=-DCMAKE_BUILD_TYPE=DEBUG
+else
+CMAKEFLAGS=-DCMAKE_BUILD_TYPE=Release
+endif
+
+
 all:
 	cd $(NAO_DIR); $(MAKE) lib; $(MAKE)
 
@@ -11,9 +18,9 @@ all:
 cmake: 
 	-mkdir build;
 ifdef TOOLCHAIN
-	cd build; cmake -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN} ..;
+	cd build; cmake -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN} ${CMAKEFLAGS} ..;
 else
-	cd build; cmake ..;
+	cd build; cmake ${CMAKEFLAGS} ..;
 endif
 	cd build; ${MAKE}
 
