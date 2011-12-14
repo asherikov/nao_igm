@@ -638,6 +638,38 @@ void nao_igm::switchSupportFoot()
             support_foot = IGM_SUPPORT_LEFT;
         }
     }
+
+    for (int i = SUPPORT_FOOT_POS_START; 
+            i < SUPPORT_FOOT_POS_START + SUPPORT_FOOT_POS_NUM; 
+            i++)
+    {
+        q[i] = swing_foot_posture[12 + i - SUPPORT_FOOT_POS_START];
+    }
+
+    double sup_orientation[ORIENTATION_MATRIX_SIZE];
+    T2Rot (swing_foot_posture, sup_orientation);
+    for (int i = SUPPORT_FOOT_ORIENTATION_START; 
+            i < SUPPORT_FOOT_ORIENTATION_START + SUPPORT_FOOT_ORIENTATION_NUM; 
+            i++)
+    {
+        q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
+    }
+
+
+    double torso_posture[POSTURE_MATRIX_SIZE];
+    if (support_foot == IGM_SUPPORT_LEFT)
+    {
+        LLeg2RLeg(q, swing_foot_posture);
+        LLeg2Torso(q, torso_posture);
+        LLeg2CoM(q, CoM_position);
+    }
+    else
+    {
+        RLeg2LLeg(q, swing_foot_posture);
+        RLeg2Torso(q, torso_posture);
+        RLeg2CoM(q, CoM_position);
+    }
+    T2Rot(torso_posture, torso_orientation);
 }
 
 

@@ -26,8 +26,7 @@ endif
 
 
 clean:
-	rm -f $(NAO_DIR)/$(OBJ_DIR)/*.o
-	rm -f $(NAO_DIR)/a
+	cd $(NAO_DIR); ${MAKE} clean;
 	rm -f $(LIB_DIR)/*.a
 	rm -f a
 	rm -rf $(DOC_DIR)

@@ -7,7 +7,8 @@ AR = ar
 
 
 test: 
-	g++ $(CFLAGS) -o a test_igm_3_1.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
+	g++ $(CFLAGS) -o test_3_1.a test_igm_3_1.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
+	g++ $(CFLAGS) -o test_4.a test_igm_4.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
 
 
 lib:
@@ -44,7 +45,7 @@ lib:
 
 clean:
 	rm -f $(OBJ_DIR)/*.o
-	rm -f a
+	rm -f *.a
 
 # dummy targets
 .PHONY: clean
