@@ -23,18 +23,19 @@ int main(int argc, char** argv)
     nao_igm nao;
 
 
-    nao.q[0]  = 0.0014265491477135045;
-    nao.q[1]  = -0.41732929046562739;
-    nao.q[2]  = 28.746025296929801;
-    nao.q[3]  = -46.548684804152458;
-    nao.q[4]  = 17.706190733695742;
-    nao.q[5]  = 0.4156953589200087;
-    nao.q[6]  = 0.0014265491492418785;
-    nao.q[7]  = -0.39761540860406758;
-    nao.q[8]  = 38.839406285499955;
-    nao.q[9]  = -70.521411965286276;
-    nao.q[10] = 31.58631023642333;
-    nao.q[11] = 0.39589342309323805;
+
+    nao.q[0]  = -2.7676870406486114e-05;
+    nao.q[1]  = 0.032806022566075822;
+    nao.q[2]  = -0.81030421414459242;
+    nao.q[3]  = 0.56882095159942125;
+    nao.q[4]  = 0.15419009646993775;
+    nao.q[5]  = -0.03268290396557879;
+    nao.q[6]  = -2.7676870986320282e-05;
+    nao.q[7]  = 0.032359010861538688;
+    nao.q[8]  = -0.64372298049772814;
+    nao.q[9]  = 0.53301994524106533;
+    nao.q[10] = 0.023411144269111651;
+    nao.q[11] = -0.032234183341070845;
     nao.q[12] = 1.396263;
     nao.q[13] = 0.34906599999999999;
     nao.q[14] = -1.396263;
@@ -48,20 +49,20 @@ int main(int argc, char** argv)
     nao.q[22] = 0;
     nao.q[23] = 0;
 
-    nao.q[24] = 0;
+    nao.q[24] = 0.14000000000000001;
     nao.q[25] = -0.050000000000000003;
     nao.q[26] = 0;
 
     nao.q[27] = 1;
     nao.q[28] = 0;
     nao.q[29] = 0;
-    nao.q[30] = 0;
+    nao.q[30] = -0;
     nao.q[31] = 1;
     nao.q[32] = 0;
     nao.q[33] = 0;
-    nao.q[34] = 0;
+    nao.q[34] = -0;
     nao.q[35] = 1;
-                                                                       
+                                                         
 
     nao.swing_foot_posture[0]  = 1;
     nao.swing_foot_posture[1]  = 0;
@@ -70,30 +71,30 @@ int main(int argc, char** argv)
     nao.swing_foot_posture[4]  = -0;
     nao.swing_foot_posture[5]  = 1;
     nao.swing_foot_posture[6]  = 0;
-    nao.swing_foot_posture[7]  = 0 ;
+    nao.swing_foot_posture[7]  = 0;
     nao.swing_foot_posture[8]  = 0;
     nao.swing_foot_posture[9]  = -0;
     nao.swing_foot_posture[10] = 1;
     nao.swing_foot_posture[11] = 0;
 
-    nao.swing_foot_posture[12] = 0;
+    nao.swing_foot_posture[12] = 0.17150000000000001;
     nao.swing_foot_posture[13] = 0.050000000000000003;
-    nao.swing_foot_posture[14] = 0;
+    nao.swing_foot_posture[14] = 0.0025650000000000091;
     nao.swing_foot_posture[15] = 1;
+
     
-    
-    nao.torso_orientation[0] = 0.99619473840986084;
-    nao.torso_orientation[1] = -0;
-    nao.torso_orientation[2] = -0.087155281908264007;
-    nao.torso_orientation[3] = 0;
-    nao.torso_orientation[4] = 1.0000000000000002;
-    nao.torso_orientation[5] = 0;
-    nao.torso_orientation[6] = 0.087155281908263924;
-    nao.torso_orientation[7] = 0;
-    nao.torso_orientation[8] = 0.99619473840986117;  
-     
-    nao.CoM_position[0] = -0.0109689996033003770;
-    nao.CoM_position[1] = 0.058099459507841178;
+    nao.torso_orientation[0] = 0.99618568308522459;
+    nao.torso_orientation[1] = -0.0042475465289972536;
+    nao.torso_orientation[2] = -0.087155281908261634;
+    nao.torso_orientation[3] = 0.0042637712941319544;
+    nao.torso_orientation[4] = 0.99999091008586261;
+    nao.torso_orientation[5] = 5.5511151231257827e-17;
+    nao.torso_orientation[6] = 0.087154489674232435;
+    nao.torso_orientation[7] = -0.00037161018913245414;
+    nao.torso_orientation[8] = 0.99619473840986128;
+                                                          
+    nao.CoM_position[0] = 0.12117274733661604;
+    nao.CoM_position[1] = -0.0045745286535708507;
     nao.CoM_position[2] = 0.2618665245671406;
    
 
