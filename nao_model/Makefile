@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -O3 -DNDEBUG
 AR = ar
 
 
-test: 
+test: lib
 	g++ $(CFLAGS) -o test_3_1.a test_igm_3_1.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
 	g++ $(CFLAGS) -o test_4.a test_igm_4.cpp $(INCLUDE_DIRS) -L$(LIB_DIR) -lnaoigm
 
