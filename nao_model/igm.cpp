@@ -53,6 +53,8 @@ nao_igm::nao_igm()
     // HEAD                   
     setBounds(HEAD_PITCH      , -2.085700,  2.085700);
     setBounds(HEAD_YAW        , -0.672000,  0.514900);
+
+    initJointAngles();
 }
 
 
@@ -587,8 +589,6 @@ void nao_igm::init(
         const double *sup_position, 
         const double *sup_orientation)
 {
-    initJointAngles();
-
     for (int i = SUPPORT_FOOT_POS_START; 
             i < SUPPORT_FOOT_POS_START + SUPPORT_FOOT_POS_NUM; 
             i++)
