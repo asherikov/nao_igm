@@ -517,32 +517,43 @@ void nao_igm::PostureOffset(
 
 
 /**
- * @brief Set position in a 4x4 homogenous matrix.
+ * @brief Set position in a 4x4 homogeneous matrix.
  *
  * @param[in,out] Tc 4x4 homogeneous matrix.
  * @param[in] position 3x1 vector of coordinates.
- * @param[in] orientation 3x3 rotation matrix.
+ * @param[in] roll angle
+ * @param[in] pitch angle
+ * @param[in] yaw angle
  */
 void nao_igm::initPosture (
         double *Tc, 
         const double *position,
-        const double *orientation)
+        const double roll,
+        const double pitch,
+        const double yaw)
 {
     Tc[12] = position[0];
     Tc[13] = position[1];
     Tc[14] = position[2];
 
-    Tc[0]  = orientation[0];
-    Tc[4]  = orientation[3];
-    Tc[8]  = orientation[6];
-    Tc[1]  = orientation[1];
-    Tc[5]  = orientation[4];
-    Tc[9]  = orientation[7];
-    Tc[2]  = orientation[2];
-    Tc[6]  = orientation[5];
-    Tc[10] = orientation[8];
+    // form the rotation matrix corresponding to a set of roll-pitch-yaw angles
+    rpy2R_hom (roll, pitch, yaw, Tc);
 }
 
+
+/**
+ * @brief Set coordinates of center of mass.
+ *
+ * @param[in] x coordinate
+ * @param[in] y coordinate
+ * @param[in] z coordinate
+ */
+void nao_igm::setCoM (const double x, const double y, const double z)
+{
+    CoM_position[0] = x;
+    CoM_position[1] = y;
+    CoM_position[2] = z;
+}
 
 
 /** \brief Given a rotation matrix and an offset specified as X(alpha)->Y(beta)->Z(gamma) (current
@@ -767,3 +778,32 @@ void nao_igm::rpy2R(const double roll, const double pitch, const double yaw, dou
     R[2] = -cr*sp*cy + sr*sy; R[5] =  cr*sp*sy + sr*cy; R[8] =  cr*cp;
 }
 
+
+/** \brief Forms the rotation matrix corresponding to a set of roll-pitch-yaw angles
+
+    \param[in] roll roll angle [radian]
+    \param[in] pitch pitch angle [radian]
+    \param[in] yaw yaw angle [radian]
+    \param[out] R homogeneous matrix
+    
+    \note The rotation defined using roll, pitch and yaw angles is assumed to be formed by first
+    applying a rotation around the x axis (roll), then a rotation around the new y axis (pitch) and
+    finally a rotation around the new z axis (yaw).
+
+    \note The matrix is stored column-wise (Fortran formatting)
+ */
+void nao_igm::rpy2R_hom(const double roll, const double pitch, const double yaw, double *R)
+{
+    double sr = sin(roll);
+    double cr = cos(roll);
+
+    double sp = sin(pitch);
+    double cp = cos(pitch);
+
+    double sy = sin(yaw);
+    double cy = cos(yaw);
+
+    R[0] =  cp*cy;            R[4] = -cp*sy;            R[8] =  sp;
+    R[1] =  sr*sp*cy + cr*sy; R[5] = -sr*sp*sy + cr*cy; R[9] = -sr*cp;
+    R[2] = -cr*sp*cy + sr*sy; R[6] =  cr*sp*sy + sr*cy; R[10] =  cr*cp;
+}

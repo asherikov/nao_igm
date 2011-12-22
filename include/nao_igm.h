@@ -82,8 +82,10 @@ class nao_igm
         void switchSupportFoot();
         void initJointAngles();
         int checkJointBounds();
-        void initPosture (double *, const double *, const double *);
+        void initPosture (double *, const double *, const double, const double, const double);
         void rpy2R(const double, const double, const double, double *);
+        void rpy2R_hom(const double, const double, const double, double *);
+        void setCoM (const double, const double, const double);
 
 
 
