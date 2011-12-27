@@ -18,7 +18,7 @@ set (CMAKE_RULE_MESSAGES OFF CACHE BOOL "")
 # Other parameters
 ####################################
 
-find_path(EIGEN_INCLUDE_DIRS "Eigen/Dense" PATHS "${SDK_DIR}/include" PATH_SUFFIXES "eigen2")
+find_path(EIGEN_INCLUDE_DIRS "Eigen/Core" PATHS "${SDK_DIR}/include" PATH_SUFFIXES "eigen2")
 if (EIGEN_INCLUDE_DIRS)
     include_directories ("${EIGEN_INCLUDE_DIRS}")
 endif (EIGEN_INCLUDE_DIRS)
