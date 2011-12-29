@@ -43,6 +43,15 @@ lib:
 	$(OBJ_DIR)/Leg2EE.o \
 	$(OBJ_DIR)/igm.o 
 
+leg2joints:
+	-mkdir obj
+	gcc $(CFLAGS) -c LLeg2JointsEE.c -o $(OBJ_DIR)/LLeg2JointsEE.o
+	gcc $(CFLAGS) -c RLeg2JointsEE.c -o $(OBJ_DIR)/RLeg2JointsEE.o
+
+	$(AR) -r $(LIB_DIR)/libleg2joints.a \
+	$(OBJ_DIR)/LLeg2JointsEE.o \
+	$(OBJ_DIR)/RLeg2JointsEE.o
+
 clean:
 	rm -f $(OBJ_DIR)/*.o
 	rm -f *.a

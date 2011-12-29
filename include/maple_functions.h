@@ -22,9 +22,6 @@ extern "C" {
   void from_LLeg_4(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
   void from_RLeg_4(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
 
-  void LLeg2Joints(double *q, double *A);
-  void RLeg2Joints(double *q, double *A);
-
   void LLeg2RLeg(double *q,double *T);
   void LLeg2LHand(double *q,double *T);
   void LLeg2RHand(double *q,double *T);

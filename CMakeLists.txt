@@ -39,5 +39,9 @@ set (IGM_SRC "${IGM_SRC_DIR}/JacCoM.c"
              "${IGM_SRC_DIR}/from_RLeg_4.c"
              "${IGM_SRC_DIR}/igm.cpp")
 
+set (L2J_SRC "${IGM_SRC_DIR}/LLeg2JointsEE.c"
+             "${IGM_SRC_DIR}/RLeg2JointsEE.c")
+
 
 add_library (naoigm STATIC ${IGM_SRC})
+add_library (leg2joints STATIC ${L2J_SRC})
