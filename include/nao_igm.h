@@ -86,7 +86,7 @@ class nao_igm
         void rpy2R(const double, const double, const double, double *);
         void rpy2R_hom(const double, const double, const double, double *);
         void setCoM (const double, const double, const double);
-
+        double* getUpdatedCoM ();
 
 
 

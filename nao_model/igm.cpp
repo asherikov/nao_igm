@@ -556,6 +556,26 @@ void nao_igm::setCoM (const double x, const double y, const double z)
 }
 
 
+/**
+ * @brief Update CoM after joint angles were changed and return result.
+ *
+ * @return 3x1 vector of coordinates.
+ */
+double* nao_igm::getUpdatedCoM ()
+{
+    if (support_foot == IGM_SUPPORT_LEFT)
+    {
+        LLeg2CoM(q, CoM_position);
+    }
+    else
+    {
+        RLeg2CoM(q, CoM_position);
+    }
+
+    return CoM_position;
+}
+
+
 /** \brief Given a rotation matrix and an offset specified as X(alpha)->Y(beta)->Z(gamma) (current
     axis) Euler angles, returns a rotation matrix Rd that includes the offset.
 
