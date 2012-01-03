@@ -15,10 +15,6 @@
 nao_igm::nao_igm()
 {
     state_var_num = JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM;
-    q = new double[state_var_num];
-    q_lower_bound = new double[state_var_num];
-    q_upper_bound = new double[state_var_num];
-
 
     // LEFT LEG
     setBounds(L_HIP_YAW_PITCH , -1.145303,  0.740810);
@@ -57,16 +53,6 @@ nao_igm::nao_igm()
     initJointAngles();
 }
 
-
-/**
- * @brief Constructor
- */
-nao_igm::~nao_igm()
-{
-    delete q;
-    delete q_lower_bound;
-    delete q_upper_bound;
-}
 
 
 /**

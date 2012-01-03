@@ -52,7 +52,6 @@ class nao_igm
 {
     public:
         nao_igm();
-        ~nao_igm();
 
         void PostureOffset(
                 const double *, 
@@ -96,9 +95,10 @@ class nao_igm
         int igm_4(double *, double *, double *, const double *, const double);
 
 
-        double *q;
-        double *q_lower_bound;
-        double *q_upper_bound;
+        double q[JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM];
+        double q_lower_bound[JOINTS_NUM];
+        double q_upper_bound[JOINTS_NUM];
+
         int state_var_num;
         double swing_foot_posture[POSTURE_MATRIX_SIZE];
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
