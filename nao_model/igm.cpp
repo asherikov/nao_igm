@@ -545,9 +545,9 @@ void nao_igm::setCoM (const double x, const double y, const double z)
 /**
  * @brief Update CoM after joint angles were changed and return result.
  *
- * @return 3x1 vector of coordinates.
+ * @param[in,out] CoM_pos 3x1 vector of coordinates.
  */
-double* nao_igm::getUpdatedCoM ()
+void nao_igm::getUpdatedCoM (double *CoM_pos)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
@@ -558,8 +558,34 @@ double* nao_igm::getUpdatedCoM ()
         RLeg2CoM(q, CoM_position);
     }
 
-    return CoM_position;
+    CoM_pos[0] = CoM_position[0];
+    CoM_pos[1] = CoM_position[1];
+    CoM_pos[2] = CoM_position[2];
 }
+
+
+
+/**
+ * @brief Update swing foot position after joint angles were changed and return result.
+ *
+ * @param[in,out] swing_foot  3x1 vector of coordinates.
+ */
+void nao_igm::getUpdatedSwingFoot (double * swing_foot)
+{
+    if (support_foot == IGM_SUPPORT_LEFT)
+    {
+        LLeg2RLeg(q, swing_foot_posture);
+    }
+    else
+    {
+        RLeg2LLeg(q, swing_foot_posture);
+    }
+
+    swing_foot[0] = swing_foot_posture[12];
+    swing_foot[1] = swing_foot_posture[13];
+    swing_foot[2] = swing_foot_posture[14];
+}
+
 
 
 /** \brief Given a rotation matrix and an offset specified as X(alpha)->Y(beta)->Z(gamma) (current
