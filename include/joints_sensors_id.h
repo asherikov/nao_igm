@@ -23,6 +23,9 @@ enum jointSensorIDs {
     R_ANKLE_PITCH       = 10,
     R_ANKLE_ROLL        = 11,
 
+    // The number of joints in the lower body.
+    LOWER_JOINTS_NUM    = 12,
+
     // LEFT ARM
     L_SHOULDER_PITCH    = 12,
     L_SHOULDER_ROLL     = 13,
