@@ -1,4 +1,4 @@
-# Doxyfile 1.5.5
+# Doxyfile 1.7.3
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -25,13 +25,13 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = "Multibody simulator"
+PROJECT_NAME           = "Inverse geometrical model for Nao"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 
+PROJECT_NUMBER         =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -86,7 +86,7 @@ REPEAT_BRIEF           = YES
 # "The $name file" "is" "provides" "specifies" "contains" 
 # "represents" "a" "an" "the"
 
-ABBREVIATE_BRIEF       = 
+ABBREVIATE_BRIEF       =
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then 
 # Doxygen will generate a detailed section even if there is only a brief 
@@ -114,7 +114,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the 
 # path to strip.
 
-STRIP_FROM_PATH        = 
+STRIP_FROM_PATH        =
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of 
 # the path mentioned in the documentation of a class, which tells 
@@ -123,7 +123,7 @@ STRIP_FROM_PATH        =
 # definition is used. Otherwise one should specify the include paths that 
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = 
+STRIP_FROM_INC_PATH    =
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter 
 # (but less readable) file names. This can be useful is your file systems 
@@ -179,7 +179,7 @@ TAB_SIZE               = 8
 # will result in a user-defined paragraph with heading "Side Effects:". 
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = 
+ALIASES                =
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C 
 # sources only. Doxygen will then generate output that is more tailored for C. 
@@ -412,7 +412,7 @@ GENERATE_DEPRECATEDLIST= YES
 # The ENABLED_SECTIONS tag can be used to enable conditional 
 # documentation sections, marked by \if sectionname ... \endif.
 
-ENABLED_SECTIONS       = 
+ENABLED_SECTIONS       =
 
 # The MAX_INITIALIZER_LINES tag determines the maximum number of lines 
 # the initial value of a variable or define consists of for it to appear in 
@@ -444,7 +444,7 @@ SHOW_DIRECTORIES       = YES
 # provided by doxygen. Whatever the program writes to standard output 
 # is used as the file version. See the manual for examples.
 
-FILE_VERSION_FILTER    = 
+FILE_VERSION_FILTER    =
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -495,7 +495,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # and error messages should be written. If left blank the output is written 
 # to stderr.
 
-WARN_LOGFILE           = 
+WARN_LOGFILE           =
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
@@ -506,7 +506,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = 
+INPUT                  =
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -523,7 +523,7 @@ INPUT_ENCODING         = UTF-8
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx 
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
-FILE_PATTERNS          = 
+FILE_PATTERNS          =
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 
@@ -551,7 +551,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories 
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       =
 
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names 
@@ -560,20 +560,20 @@ EXCLUDE_PATTERNS       =
 # wildcard * is used, a substring. Examples: ANamespace, AClass, 
 # AClass::ANamespace, ANamespace::*Test
 
-EXCLUDE_SYMBOLS        = 
+EXCLUDE_SYMBOLS        =
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = 
+EXAMPLE_PATH           =
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
 # and *.h) to filter out the source-files in the directories. If left 
 # blank all files are included.
 
-EXAMPLE_PATTERNS       = 
+EXAMPLE_PATTERNS       =
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be 
 # searched for input files to be used with the \include or \dontinclude 
@@ -586,7 +586,7 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see 
 # the \image command).
 
-IMAGE_PATH             = 
+IMAGE_PATH             =
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should 
 # invoke to filter for each input file. Doxygen will invoke the filter program 
@@ -596,7 +596,7 @@ IMAGE_PATH             =
 # to standard output.  If FILTER_PATTERNS is specified, this tag will be 
 # ignored.
 
-INPUT_FILTER           = 
+INPUT_FILTER           =
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern 
 # basis.  Doxygen will compare the file name with each pattern and apply the 
@@ -605,7 +605,7 @@ INPUT_FILTER           =
 # info on how filters are used. If FILTER_PATTERNS is empty, INPUT_FILTER 
 # is applied to all files.
 
-FILTER_PATTERNS        = 
+FILTER_PATTERNS        =
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using 
 # INPUT_FILTER) will be used to filter the input files when producing source 
@@ -689,7 +689,7 @@ COLS_IN_ALPHA_INDEX    = 5
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that 
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          = 
+IGNORE_PREFIX          =
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -704,7 +704,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = 
+HTML_OUTPUT            = ./
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank 
@@ -716,13 +716,13 @@ HTML_FILE_EXTENSION    = .html
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard header.
 
-HTML_HEADER            = 
+HTML_HEADER            =
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for 
 # each generated HTML page. If it is left blank doxygen will generate a 
 # standard footer.
 
-HTML_FOOTER            = 
+HTML_FOOTER            =
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading 
 # style sheet that is used by each HTML page. It can be used to 
@@ -731,7 +731,7 @@ HTML_FOOTER            =
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        =
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
@@ -784,14 +784,14 @@ HTML_DYNAMIC_SECTIONS  = NO
 # can add a path in front of the file if the result should not be 
 # written to the html output directory.
 
-CHM_FILE               = 
+CHM_FILE               =
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can 
 # be used to specify the location (absolute path including file name) of 
 # the HTML help compiler (hhc.exe). If non-empty doxygen will try to run 
 # the HTML help compiler on the generated index.hhp.
 
-HHC_LOCATION           = 
+HHC_LOCATION           =
 
 # If the GENERATE_HTMLHELP tag is set to YES, the GENERATE_CHI flag 
 # controls if a separate .chi index file is generated (YES) or that 
@@ -877,14 +877,14 @@ PAPER_TYPE             = a4wide
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX 
 # packages that should be included in the LaTeX output.
 
-EXTRA_PACKAGES         = 
+EXTRA_PACKAGES         =
 
 # The LATEX_HEADER tag can be used to specify a personal LaTeX header for 
 # the generated latex document. The header should contain everything until 
 # the first chapter. If it is left blank doxygen will generate a 
 # standard header. Notice: only use this tag if you know what you are doing!
 
-LATEX_HEADER           = 
+LATEX_HEADER           =
 
 # If the PDF_HYPERLINKS tag is set to YES, the LaTeX that is generated 
 # is prepared for conversion to pdf (using ps2pdf). The pdf file will 
@@ -947,12 +947,12 @@ RTF_HYPERLINKS         = NO
 # config file, i.e. a series of assignments. You only have to provide 
 # replacements, missing definitions are set to their default value.
 
-RTF_STYLESHEET_FILE    = 
+RTF_STYLESHEET_FILE    =
 
 # Set optional variables used in the generation of an rtf document. 
 # Syntax is similar to doxygen's config file.
 
-RTF_EXTENSIONS_FILE    = 
+RTF_EXTENSIONS_FILE    =
 
 #---------------------------------------------------------------------------
 # configuration options related to the man page output
@@ -1002,13 +1002,13 @@ XML_OUTPUT             = xml
 # which can be used by a validating XML parser to check the 
 # syntax of the XML files.
 
-XML_SCHEMA             = 
+XML_SCHEMA             =
 
 # The XML_DTD tag can be used to specify an XML DTD, 
 # which can be used by a validating XML parser to check the 
 # syntax of the XML files.
 
-XML_DTD                = 
+XML_DTD                =
 
 # If the XML_PROGRAMLISTING tag is set to YES Doxygen will 
 # dump the program listings (including syntax highlighting 
@@ -1060,7 +1060,7 @@ PERLMOD_PRETTY         = YES
 # This is useful so different doxyrules.make files included by the same 
 # Makefile don't overwrite each other's variables.
 
-PERLMOD_MAKEVAR_PREFIX = 
+PERLMOD_MAKEVAR_PREFIX =
 
 #---------------------------------------------------------------------------
 # Configuration options related to the preprocessor   
@@ -1070,7 +1070,7 @@ PERLMOD_MAKEVAR_PREFIX =
 # evaluate all C-preprocessor directives found in the sources and include 
 # files.
 
-ENABLE_PREPROCESSING   = YES
+ENABLE_PREPROCESSING   = NO
 
 # If the MACRO_EXPANSION tag is set to YES Doxygen will expand all macro 
 # names in the source code. If set to NO (the default) only conditional 
@@ -1094,14 +1094,14 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor.
 
-INCLUDE_PATH           = 
+INCLUDE_PATH           =
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 
 # directories. If left blank, the patterns specified with FILE_PATTERNS will 
 # be used.
 
-INCLUDE_FILE_PATTERNS  = 
+INCLUDE_FILE_PATTERNS  =
 
 # The PREDEFINED tag can be used to specify one or more macro names that 
 # are defined before the preprocessor is started (similar to the -D option of 
@@ -1111,14 +1111,14 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = 
+PREDEFINED             =
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
 # The macro definition that is found in the sources will be used. 
 # Use the PREDEFINED tag if you want to use a different macro definition.
 
-EXPAND_AS_DEFINED      = 
+EXPAND_AS_DEFINED      =
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES (the default) then 
 # doxygen's preprocessor will remove all function-like macros that are alone 
@@ -1147,12 +1147,12 @@ SKIP_FUNCTION_MACROS   = YES
 # If a tag file is not located in the directory in which doxygen 
 # is run, you must also specify the path to the tagfile here.
 
-TAGFILES               = 
+TAGFILES               =
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       = 
+GENERATE_TAGFILE       =
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed 
 # in the class index. If set to NO only the inherited external classes 
@@ -1191,7 +1191,7 @@ CLASS_DIAGRAMS         = YES
 # the mscgen tool resides. If left empty the tool is assumed to be found in the 
 # default search path.
 
-MSCGEN_PATH            = 
+MSCGEN_PATH            =
 
 # If set to YES, the inheritance and collaboration graphs will hide 
 # inheritance and usage relations if the target is undocumented 
@@ -1287,13 +1287,13 @@ DOT_IMAGE_FORMAT       = png
 # The tag DOT_PATH can be used to specify the path where the dot tool can be 
 # found. If left blank, it is assumed the dot tool can be found in the path.
 
-DOT_PATH               = 
+DOT_PATH               =
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that 
 # contain dot files that are included in the documentation (see the 
 # \dotfile command).
 
-DOTFILE_DIRS           = 
+DOTFILE_DIRS           =
 
 # The MAX_DOT_GRAPH_MAX_NODES tag can be used to set the maximum number of 
 # nodes that will be shown in the graph. If the number of nodes in a graph 

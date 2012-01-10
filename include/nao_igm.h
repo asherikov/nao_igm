@@ -88,11 +88,14 @@ class nao_igm
         void getUpdatedCoM (double *);
         void getUpdatedSwingFoot (double *);
 
-
+#ifdef ENABLE_ALL_IGM_VERSIONS
         int igm_1(double *, double *);
         int igm_2(double *, double *, double *);
-        int igm_3(double *, double *, double *);
         int igm_4(double *, double *, double *, const double *, const double);
+#endif
+
+        int igm_3(double *, double *, double *);
+        int igm_3(double *, double *, double *, const double *, const double);
 
 
         double q[JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM];
