@@ -32,11 +32,11 @@ set (IGM_SRC "${IGM_SRC_DIR}/JacCoM.c"
 #             "${IGM_SRC_DIR}/from_LLeg_1.c"
 #             "${IGM_SRC_DIR}/from_LLeg_2.c"
              "${IGM_SRC_DIR}/from_LLeg_3.c"
-#             "${IGM_SRC_DIR}/from_LLeg_4.c"
+             "${IGM_SRC_DIR}/from_LLeg_4.c"
 #             "${IGM_SRC_DIR}/from_RLeg_1.c"
 #             "${IGM_SRC_DIR}/from_RLeg_2.c"
              "${IGM_SRC_DIR}/from_RLeg_3.c"
-#             "${IGM_SRC_DIR}/from_RLeg_4.c"
+             "${IGM_SRC_DIR}/from_RLeg_4.c"
              "${IGM_SRC_DIR}/igm_versions.cpp"
              "${IGM_SRC_DIR}/igm.cpp")
 
