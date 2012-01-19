@@ -23,6 +23,7 @@
 #define ORIENTATION_MATRIX_SIZE 3*3
 #define POSITION_VECTOR_SIZE 3
 
+
 /****************************************
  * TYPEDEFS 
  ****************************************/
@@ -47,12 +48,28 @@ enum supportFootOrientation {
     SUPPORT_FOOT_ORIENTATION_NUM = 9
 };
 
+#define STATE_VAR_NUM  (JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM)
+
+
+class modelState
+{
+    public:
+        modelState();
+
+        void getCoM (double *);
+        void getSwingFoot (double *);
+        void initJointAngles();
+
+
+        double q[STATE_VAR_NUM];
+        igmSupportFoot support_foot;
+};
+
+
 
 class nao_igm 
 {
     public:
-        nao_igm();
-
         void PostureOffset(
                 const double *, 
                 double *, 
@@ -69,24 +86,30 @@ class nao_igm
                 const double, 
                 const double);
         void T2Rot(const double *, double *);
-        void SetBasePose(
+
+
+        void init (
+                const igmSupportFoot,
                 const double, 
                 const double, 
                 const double, 
                 const double, 
                 const double, 
                 const double);
+        void init (
+                const igmSupportFoot,
+                const double, 
+                const double, 
+                const double, 
+                const double*);
 
-        void init(const igmSupportFoot, const double *, const double *);
+
         void switchSupportFoot();
-        void initJointAngles();
         int checkJointBounds();
         void initPosture (double *, const double *, const double, const double, const double);
         void rpy2R(const double, const double, const double, double *);
         void rpy2R_hom(const double, const double, const double, double *);
         void setCoM (const double, const double, const double);
-        void getUpdatedCoM (double *);
-        void getUpdatedSwingFoot (double *);
 
 #ifdef ENABLE_ALL_IGM_VERSIONS
         int igm_1(double *, double *);
@@ -97,25 +120,13 @@ class nao_igm
         int igm_4(double *, double *, double *, const double *, const double);
 
 
-        double q[JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM];
-        double q_lower_bound[JOINTS_NUM];
-        double q_upper_bound[JOINTS_NUM];
+        modelState state;
 
-        int state_var_num;
+
         double swing_foot_posture[POSTURE_MATRIX_SIZE];
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
-        igmSupportFoot support_foot;
-
-    private:
-        void setBounds (const jointSensorIDs, const double, const double);
 };
-
-
-
-/****************************************
- * PROTOTYPES 
- ****************************************/
 
 #endif // NAO_IGM_H
 

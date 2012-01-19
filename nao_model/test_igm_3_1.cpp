@@ -28,17 +28,16 @@ int main(int argc, char** argv)
 
 
     // set initial configuration
-    double *q0 = new double[nao.state_var_num];
-    double foot_position[3] = {0.0, 0.05, 0.0};
+    double *q0 = new double[STATE_VAR_NUM];
     double foot_orientation[9] = {
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
         0.0, 0.0, 1.0};
 
-    nao.init (IGM_SUPPORT_RIGHT, foot_position, foot_orientation);
+    nao.init (IGM_SUPPORT_RIGHT, 0.0, 0.05, 0.0, foot_orientation);
 
-    for (int i=0; i<nao.state_var_num; i++)
-        q0[i] = nao.q[i];
+    for (int i=0; i<STATE_VAR_NUM; i++)
+        q0[i] = nao.state.q[i];
 
 
     nao.PostureOffset(nao.swing_foot_posture, nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
@@ -52,8 +51,8 @@ int main(int argc, char** argv)
     gettimeofday(&start,0);
     for (int i=0 ; i<test_N ; i++)
     {
-        for (int j=0; j<nao.state_var_num; j++) // every time start from q0
-            nao.q[j] = q0[j];
+        for (int j=0; j<STATE_VAR_NUM; j++) // every time start from q0
+            nao.state.q[j] = q0[j];
 
         iter = nao.igm_3(nao.swing_foot_posture, nao.CoM_position, nao.torso_orientation);
     }
@@ -63,7 +62,7 @@ int main(int argc, char** argv)
 
     cout << "iter = " << iter << endl;
 
-    MatrixPrint(1,12,nao.q,"q");
+    MatrixPrint(1,12,nao.state.q,"q");
 
     int check_bounds = nao.checkJointBounds();
     if (check_bounds >= 0)

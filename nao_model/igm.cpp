@@ -2,69 +2,10 @@
 
 #include "nao_igm.h"
 #include "maple_functions.h"
+#include "joint_bounds.h"
 
 #include <Eigen/Core>   
 #include <Eigen/Cholesky>
-
-
-/**
- * @brief Constructor
- */
-nao_igm::nao_igm()
-{
-    state_var_num = JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM;
-
-    // LEFT LEG
-    setBounds(L_HIP_YAW_PITCH , -1.145303,  0.740810);
-    setBounds(L_HIP_ROLL      , -0.379472,  0.790477);
-    setBounds(L_HIP_PITCH     , -1.773912,  0.484090);
-    setBounds(L_KNEE_PITCH    , -0.092346,  2.112528);
-    setBounds(L_ANKLE_PITCH   , -1.189516,  0.922747);
-    setBounds(L_ANKLE_ROLL    , -0.769001,  0.397880);
-                              
-    // RIGHT LEG
-    setBounds(R_HIP_YAW_PITCH , -1.145303,  0.740810);
-    setBounds(R_HIP_ROLL      , -0.738321,  0.414754);
-    setBounds(R_HIP_PITCH     , -1.772308,  0.485624);
-    setBounds(R_KNEE_PITCH    , -0.103083,  2.120198);
-    setBounds(R_ANKLE_PITCH   , -1.186448,  0.932056);
-    setBounds(R_ANKLE_ROLL    , -0.388676,  0.785875);
-                              
-    // LEFT ARM
-    setBounds(L_SHOULDER_PITCH, -2.085600,  2.085600);
-    setBounds(L_SHOULDER_ROLL ,  0.008700,  1.649400);
-    setBounds(L_ELBOW_YAW     , -2.085600,  2.085600);
-    setBounds(L_ELBOW_ROLL    , -1.562100, -0.008700);
-    setBounds(L_WRIST_YAW     , -1.823800,  1.823800);
-                              
-    // RIGHT ARM
-    setBounds(R_SHOULDER_PITCH, -2.085600,  2.085600);
-    setBounds(R_SHOULDER_ROLL , -1.649400, -0.008700);
-    setBounds(R_ELBOW_YAW     , -2.085600,  2.085600);
-    setBounds(R_ELBOW_ROLL    ,  0.008700,  1.562100);
-    setBounds(R_WRIST_YAW     , -1.823800,  1.823800);
-                              
-    // HEAD                   
-    setBounds(HEAD_PITCH      , -2.085700,  2.085700);
-    setBounds(HEAD_YAW        , -0.672000,  0.514900);
-
-    initJointAngles();
-}
-
-
-
-/**
- * @brief Set bounds for a joint.
- *
- * @param[in] id id of the joint.
- * @param[in] lower_bound lower bound.
- * @param[in] upper_bound upper_bound.
- */
-void nao_igm::setBounds (const jointSensorIDs id, const double lower_bound, const double upper_bound)
-{
-    q_lower_bound[id] = lower_bound;
-    q_upper_bound[id] = upper_bound;
-}
 
 
 
@@ -78,67 +19,23 @@ void nao_igm::setBounds (const jointSensorIDs id, const double lower_bound, cons
  */
 int nao_igm::checkJointBounds()
 {
-    for (int i = 0; i < JOINTS_NUM; i++)
-    {
-        if ((q_lower_bound[i] > q[i]) || (q_upper_bound[i] < q[i]))
-        {
-            return (i);
-        }
-    }
-    return (-1);
+    return(joint_bounds.check(state.q));
 }
 
 
 
-/** \brief Sets the pose of the base (of NAO)
-
-    \param[in] x x-position
-    \param[in] y y-position
-    \param[in] z z-position
-    \param[in] alpha x-rotation
-    \param[in] beta y-rotation
-    \param[in] gamma z-rotation
-*/
-void nao_igm::SetBasePose(
-        const double x, 
-        const double y, 
-        const double z, 
-        const double alpha, 
-        const double beta, 
-        const double gamma)
-{
-    double Rot[3*3];
-
-    Euler2Rot(alpha, beta, gamma, Rot);
-    q[24] = x;
-    q[25] = y;
-    q[26] = z;
-
-    q[27] = Rot[0];
-    q[30] = Rot[3];
-    q[33] = Rot[6];
-    q[28] = Rot[1];
-    q[31] = Rot[4];
-    q[34] = Rot[7];
-    q[29] = Rot[2];
-    q[32] = Rot[5];
-    q[35] = Rot[8];
-}
-
-
-
-/** \brief Given a posture of a frame (specified using a 4x4 homogeneous matrix Tc) and an offset
+/** @brief Given a posture of a frame (specified using a 4x4 homogeneous matrix Tc) and an offset
     (x, y, z, X(alpha), Y(beta), Z(gamma)) returns a posture Td that includes the offset.
 
-    \param[in] Tc 4x4 homogeneous matrix
-    \param[out] Td 4x4 homogeneous matrix
+    @param[in] Tc 4x4 homogeneous matrix
+    @param[out] Td 4x4 homogeneous matrix
 
-    \param[in] x x-position offset
-    \param[in] y y-position offset
-    \param[in] z z-position offset
-    \param[in] alpha x-rotation offset
-    \param[in] beta y-rotation offset
-    \param[in] gamma z-rotation offset
+    @param[in] x x-position offset
+    @param[in] y y-position offset
+    @param[in] z z-position offset
+    @param[in] alpha x-rotation offset
+    @param[in] beta y-rotation offset
+    @param[in] gamma z-rotation offset
 */
 void nao_igm::PostureOffset(
         const double *Tc, 
@@ -189,6 +86,7 @@ void nao_igm::initPosture (
 }
 
 
+
 /**
  * @brief Set coordinates of center of mass.
  *
@@ -204,61 +102,16 @@ void nao_igm::setCoM (const double x, const double y, const double z)
 }
 
 
-/**
- * @brief Update CoM after joint angles were changed and return result.
- *
- * @param[in,out] CoM_pos 3x1 vector of coordinates.
- */
-void nao_igm::getUpdatedCoM (double *CoM_pos)
-{
-    if (support_foot == IGM_SUPPORT_LEFT)
-    {
-        LLeg2CoM(q, CoM_position);
-    }
-    else
-    {
-        RLeg2CoM(q, CoM_position);
-    }
 
-    CoM_pos[0] = CoM_position[0];
-    CoM_pos[1] = CoM_position[1];
-    CoM_pos[2] = CoM_position[2];
-}
-
-
-
-/**
- * @brief Update swing foot position after joint angles were changed and return result.
- *
- * @param[in,out] swing_foot  3x1 vector of coordinates.
- */
-void nao_igm::getUpdatedSwingFoot (double * swing_foot)
-{
-    if (support_foot == IGM_SUPPORT_LEFT)
-    {
-        LLeg2RLeg(q, swing_foot_posture);
-    }
-    else
-    {
-        RLeg2LLeg(q, swing_foot_posture);
-    }
-
-    swing_foot[0] = swing_foot_posture[12];
-    swing_foot[1] = swing_foot_posture[13];
-    swing_foot[2] = swing_foot_posture[14];
-}
-
-
-
-/** \brief Given a rotation matrix and an offset specified as X(alpha)->Y(beta)->Z(gamma) (current
+/** @brief Given a rotation matrix and an offset specified as X(alpha)->Y(beta)->Z(gamma) (current
     axis) Euler angles, returns a rotation matrix Rd that includes the offset.
 
-    \param[in] Rc 4x4 rotation matrix
-    \param[out] Rd 4x4 rotation matrix
+    @param[in] Rc 4x4 rotation matrix
+    @param[out] Rd 4x4 rotation matrix
 
-    \param[in] alpha x-rotation offset
-    \param[in] beta y-rotation offset
-    \param[in] gamma z-rotation offset
+    @param[in] alpha x-rotation offset
+    @param[in] beta y-rotation offset
+    @param[in] gamma z-rotation offset
 */
 void nao_igm::RotationOffset(
         const double *Rc, 
@@ -286,44 +139,72 @@ void nao_igm::RotationOffset(
  * @brief Initialize model.
  *
  * @param[in] support_foot_ current support foot.
- * @param[in] sup_position position of the support foot.
+ * @param[in] x x-position
+ * @param[in] y y-position
+ * @param[in] z z-position
  * @param[in] sup_orientation orientation of the supprt foot.
  */
 void nao_igm::init(
         const igmSupportFoot support_foot_, 
-        const double *sup_position, 
+        const double x, 
+        const double y, 
+        const double z, 
         const double *sup_orientation)
 {
-    for (int i = SUPPORT_FOOT_POS_START; 
-            i < SUPPORT_FOOT_POS_START + SUPPORT_FOOT_POS_NUM; 
-            i++)
-    {
-        q[i] = sup_position[i - SUPPORT_FOOT_POS_START];
-    }
+    state.q[SUPPORT_FOOT_POS_START]       = x;
+    state.q[SUPPORT_FOOT_POS_START + 1]   = y;
+    state.q[SUPPORT_FOOT_POS_START + 2]   = z;
+
 
     for (int i = SUPPORT_FOOT_ORIENTATION_START; 
             i < SUPPORT_FOOT_ORIENTATION_START + SUPPORT_FOOT_ORIENTATION_NUM; 
             i++)
     {
-        q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
+        state.q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
     }
 
 
-    support_foot = support_foot_;
+    state.support_foot = support_foot_;
     double torso_posture[POSTURE_MATRIX_SIZE];
-    if (support_foot == IGM_SUPPORT_LEFT)
+    if (state.support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(q, swing_foot_posture);
-        LLeg2Torso(q, torso_posture);
-        LLeg2CoM(q, CoM_position);
+        LLeg2RLeg(state.q, swing_foot_posture);
+        LLeg2Torso(state.q, torso_posture);
+        LLeg2CoM(state.q, CoM_position);
     }
     else
     {
-        RLeg2LLeg(q, swing_foot_posture);
-        RLeg2Torso(q, torso_posture);
-        RLeg2CoM(q, CoM_position);
+        RLeg2LLeg(state.q, swing_foot_posture);
+        RLeg2Torso(state.q, torso_posture);
+        RLeg2CoM(state.q, CoM_position);
     }
     T2Rot(torso_posture, torso_orientation);
+}
+
+
+
+/** @brief Initialize model.
+
+    @param[in] support_foot_ current support foot.
+    @param[in] x x-position
+    @param[in] y y-position
+    @param[in] z z-position
+    @param[in] alpha x-rotation
+    @param[in] beta y-rotation
+    @param[in] gamma z-rotation
+*/
+void nao_igm::init(
+        const igmSupportFoot support_foot_, 
+        const double x, 
+        const double y, 
+        const double z, 
+        const double alpha, 
+        const double beta, 
+        const double gamma)
+{
+    double Rot[ORIENTATION_MATRIX_SIZE];
+    Euler2Rot(alpha, beta, gamma, Rot);
+    init(support_foot_, x, y, z, Rot);
 }
 
 
@@ -332,15 +213,15 @@ void nao_igm::init(
  */
 void nao_igm::switchSupportFoot()
 {
-    if (support_foot == IGM_SUPPORT_LEFT)
+    if (state.support_foot == IGM_SUPPORT_LEFT)
     {
-        support_foot = IGM_SUPPORT_RIGHT;
+        state.support_foot = IGM_SUPPORT_RIGHT;
     }
     else
     {
-        if (support_foot == IGM_SUPPORT_RIGHT)
+        if (state.support_foot == IGM_SUPPORT_RIGHT)
         {
-            support_foot = IGM_SUPPORT_LEFT;
+            state.support_foot = IGM_SUPPORT_LEFT;
         }
     }
 
@@ -348,7 +229,7 @@ void nao_igm::switchSupportFoot()
             i < SUPPORT_FOOT_POS_START + SUPPORT_FOOT_POS_NUM; 
             i++)
     {
-        q[i] = swing_foot_posture[12 + i - SUPPORT_FOOT_POS_START];
+        state.q[i] = swing_foot_posture[12 + i - SUPPORT_FOOT_POS_START];
     }
 
     double sup_orientation[ORIENTATION_MATRIX_SIZE];
@@ -357,75 +238,32 @@ void nao_igm::switchSupportFoot()
             i < SUPPORT_FOOT_ORIENTATION_START + SUPPORT_FOOT_ORIENTATION_NUM; 
             i++)
     {
-        q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
+        state.q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
     }
 
 
     double torso_posture[POSTURE_MATRIX_SIZE];
-    if (support_foot == IGM_SUPPORT_LEFT)
+    if (state.support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(q, swing_foot_posture);
-        LLeg2Torso(q, torso_posture);
-        LLeg2CoM(q, CoM_position);
+        LLeg2RLeg(state.q, swing_foot_posture);
+        LLeg2Torso(state.q, torso_posture);
+        LLeg2CoM(state.q, CoM_position);
     }
     else
     {
-        RLeg2LLeg(q, swing_foot_posture);
-        RLeg2Torso(q, torso_posture);
-        RLeg2CoM(q, CoM_position);
+        RLeg2LLeg(state.q, swing_foot_posture);
+        RLeg2Torso(state.q, torso_posture);
+        RLeg2CoM(state.q, CoM_position);
     }
     T2Rot(torso_posture, torso_orientation);
 }
 
 
 
-/** \brief Sets the initial configuration of nao (lets call it the standard initial configuration)
+/** @brief Extracts the rotation matrix from a 4x4 homogeneous matrix
 
-    \note Only q[0]...q[23] are set. The posture of the base is not set.
-*/
-void nao_igm::initJointAngles()
-{
-    // LEFT LEG
-    q[L_HIP_YAW_PITCH] =  0.0;
-    q[L_HIP_ROLL]      =  0.0;
-    q[L_HIP_PITCH]     = -0.436332;
-    q[L_KNEE_PITCH]    =  0.698132;
-    q[L_ANKLE_PITCH]   = -0.349066;
-    q[L_ANKLE_ROLL]    =  0.0;
-
-    // RIGHT LEG
-    q[R_HIP_YAW_PITCH] =  0.0;
-    q[R_HIP_ROLL]      =  0.0;
-    q[R_HIP_PITCH]     = -0.436332;
-    q[R_KNEE_PITCH]    =  0.698132;
-    q[R_ANKLE_PITCH]   = -0.349066;
-    q[R_ANKLE_ROLL]    =  0.0;
-
-    // LEFT ARM
-    q[L_SHOULDER_PITCH] =  1.396263;
-    q[L_SHOULDER_ROLL]  =  0.349066;
-    q[L_ELBOW_YAW]      = -1.396263;
-    q[L_ELBOW_ROLL]     = -1.047198;
-    q[L_WRIST_YAW]      =  0.0;
-
-    // RIGHT ARM
-    q[R_SHOULDER_PITCH] =  1.396263;
-    q[R_SHOULDER_ROLL]  = -0.349066;
-    q[R_ELBOW_YAW]      =  1.396263;
-    q[R_ELBOW_ROLL]     =  1.047198;
-    q[R_WRIST_YAW]      =  0.0;
-
-    // HEAD
-    q[HEAD_PITCH] =  0.0;
-    q[HEAD_YAW]   =  0.0;
-}
-
-
-
-/** \brief Extracts the rotation matrix from a 4x4 homogeneous matrix
-
-    \param[in] T 4x4 homogeneous matrix.
-    \param[out] Rot 3x3 rotation matrix
+    @param[in] T 4x4 homogeneous matrix.
+    @param[out] Rot 3x3 rotation matrix
 */
 void nao_igm::T2Rot(const double * T, double *Rot)
 {
@@ -441,12 +279,12 @@ void nao_igm::T2Rot(const double * T, double *Rot)
 }
 
 
-/** \brief Forms the rotation matrix corresponding to a set of roll-pitch-yaw angles
+/** @brief Forms the rotation matrix corresponding to a set of roll-pitch-yaw angles
 
-    \param[in] roll roll angle [radian]
-    \param[in] pitch pitch angle [radian]
-    \param[in] yaw yaw angle [radian]
-    \param[out] R Rotation matrix corresponding to the roll-pitch-yaw angles
+    @param[in] roll roll angle [radian]
+    @param[in] pitch pitch angle [radian]
+    @param[in] yaw yaw angle [radian]
+    @param[out] R Rotation matrix corresponding to the roll-pitch-yaw angles
     
     \note The rotation defined using roll, pitch and yaw angles is assumed to be formed by first
     applying a rotation around the x axis (roll), then a rotation around the new y axis (pitch) and
@@ -471,12 +309,12 @@ void nao_igm::rpy2R(const double roll, const double pitch, const double yaw, dou
 }
 
 
-/** \brief Forms the rotation matrix corresponding to a set of roll-pitch-yaw angles
+/** @brief Forms the rotation matrix corresponding to a set of roll-pitch-yaw angles
 
-    \param[in] roll roll angle [radian]
-    \param[in] pitch pitch angle [radian]
-    \param[in] yaw yaw angle [radian]
-    \param[out] R homogeneous matrix
+    @param[in] roll roll angle [radian]
+    @param[in] pitch pitch angle [radian]
+    @param[in] yaw yaw angle [radian]
+    @param[out] R homogeneous matrix
     
     \note The rotation defined using roll, pitch and yaw angles is assumed to be formed by first
     applying a rotation around the x axis (roll), then a rotation around the new y axis (pitch) and

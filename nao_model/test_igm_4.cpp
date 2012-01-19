@@ -56,11 +56,10 @@ int main(int argc, char** argv)
 
     for (int i = 0; i < JOINTS_NUM; i++)
     {
-        nao.q[i] = init_joint_angles[i];
+        nao.state.q[i] = init_joint_angles[i];
     }
 
 
-    double foot_position[POSITION_VECTOR_SIZE] = {0.0, -0.05, 0.0};
     double foot_orientation[ORIENTATION_MATRIX_SIZE] = {
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
@@ -68,11 +67,11 @@ int main(int argc, char** argv)
 
     nao.init (
             IGM_SUPPORT_RIGHT,
-            foot_position,
+            0.0, -0.05, 0.0,
             foot_orientation);
    
 
-    int iter = nao.igm_3(nao.swing_foot_posture, nao.CoM_position, nao.torso_orientation, init_joint_angles, 1.0);
+    int iter = nao.igm_4(nao.swing_foot_posture, nao.CoM_position, nao.torso_orientation, init_joint_angles, 1.0);
     cout << "iter = " << iter << endl;
 
     return 0;

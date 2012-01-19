@@ -71,10 +71,10 @@ int nao_igm::igm_1(double *LegT, double *TorsoT)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
-            from_LLeg_1(q, LegT, TorsoT, out);
+        if (state.support_foot == IGM_SUPPORT_LEFT)
+            from_LLeg_1(state.q, LegT, TorsoT, out);
         else
-            from_RLeg_1(q, LegT, TorsoT, out);
+            from_RLeg_1(state.q, LegT, TorsoT, out);
 
         Eigen::Map<Eigen::MatrixXd> A(out,N,N);
         Eigen::Map<Eigen::VectorXd> err(out+N*N,N);
@@ -86,7 +86,7 @@ int nao_igm::igm_1(double *LegT, double *TorsoT)
 
         // Update angles (of legs)
         for (int i=0; i < LOWER_JOINTS_NUM; i++)
-            q[i] += dq[i];
+            state.q[i] += dq[i];
 
         // Check termination condition
         norm_dq = 0;
@@ -152,10 +152,10 @@ int nao_igm::igm_2(double *LegT, double *CoM, double *RotTorso)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
-            from_LLeg_2(q, LegT, CoM, RotTorso, out);
+        if (state.support_foot == IGM_SUPPORT_LEFT)
+            from_LLeg_2(state.q, LegT, CoM, RotTorso, out);
         else
-            from_RLeg_2(q, LegT, CoM, RotTorso, out);
+            from_RLeg_2(state.q, LegT, CoM, RotTorso, out);
 
         Eigen::Map<Eigen::MatrixXd> A(out,N,N);
         Eigen::Map<Eigen::VectorXd> err(out+N*N,N);
@@ -167,7 +167,7 @@ int nao_igm::igm_2(double *LegT, double *CoM, double *RotTorso)
 
         // Update angles (of legs)
         for (int i=0; i<LOWER_JOINTS_NUM; i++)
-            q[i] += dq[i];
+            state.q[i] += dq[i];
 
         // Check termination condition
         norm_dq = 0;
@@ -231,10 +231,10 @@ int nao_igm::igm_3(double *LegT, double *CoM, double *RotTorso)
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
-            from_LLeg_3(q, LegT, CoM, RotTorso, out);
+        if (state.support_foot == IGM_SUPPORT_LEFT)
+            from_LLeg_3(state.q, LegT, CoM, RotTorso, out);
         else
-            from_RLeg_3(q, LegT, CoM, RotTorso, out);
+            from_RLeg_3(state.q, LegT, CoM, RotTorso, out);
 
         Eigen::Map<Eigen::MatrixXd> A(out,N,N);
         Eigen::Map<Eigen::VectorXd> err(out+N*N,N);
@@ -246,7 +246,7 @@ int nao_igm::igm_3(double *LegT, double *CoM, double *RotTorso)
 
         // Update angles (of legs)
         for (int i=0; i<LOWER_JOINTS_NUM; i++)
-            q[i] += dq[i];
+            state.q[i] += dq[i];
 
         // Check termination condition
         norm_dq = 0;
@@ -289,13 +289,13 @@ int nao_igm::igm_4(double *LegT, double *CoM, double *RotTorso, const double *q0
     {
 
         for (int i=0; i<N; i++)
-            z(i) = mu*(q[i] - q0[i]);
+            z(i) = mu*(state.q[i] - q0[i]);
 
         // Form data
-        if (support_foot == IGM_SUPPORT_LEFT)
-            from_LLeg_4(q, LegT, CoM, RotTorso, out);
+        if (state.support_foot == IGM_SUPPORT_LEFT)
+            from_LLeg_4(state.q, LegT, CoM, RotTorso, out);
         else
-            from_RLeg_4(q, LegT, CoM, RotTorso, out);
+            from_RLeg_4(state.q, LegT, CoM, RotTorso, out);
 
         Eigen::Map<Eigen::MatrixXd> A(out,M,N);
         Eigen::Map<Eigen::VectorXd> err(out+M*N,M);
@@ -307,7 +307,7 @@ int nao_igm::igm_4(double *LegT, double *CoM, double *RotTorso, const double *q0
 
         // Update angles (of legs)
         for (int i=0; i<N; i++)
-            q[i] += dq[i];
+            state.q[i] += dq[i];
 
         // Check termination condition
         norm_dq = 0;
