@@ -70,24 +70,6 @@ class modelState
 class nao_igm 
 {
     public:
-        void PostureOffset(
-                const double *, 
-                double *, 
-                const double, 
-                const double, 
-                const double, 
-                const double, 
-                const double, 
-                const double);
-        void RotationOffset(
-                const double *, 
-                double *, 
-                const double, 
-                const double, 
-                const double);
-        void T2Rot(const double *, double *);
-
-
         void init (
                 const igmSupportFoot,
                 const double, 
@@ -106,10 +88,8 @@ class nao_igm
 
         void switchSupportFoot();
         int checkJointBounds();
-        void initPosture (double *, const double *, const double, const double, const double);
-        void rpy2R(const double, const double, const double, double *);
-        void rpy2R_hom(const double, const double, const double, double *);
         void setCoM (const double, const double, const double);
+        void setSwingFootPosture (const double *, const double, const double, const double);
 
 #ifdef ENABLE_ALL_IGM_VERSIONS
         int igm_1(double *, double *);

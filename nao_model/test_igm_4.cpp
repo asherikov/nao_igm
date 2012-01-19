@@ -14,6 +14,8 @@
 #include "nao_igm.h"
 #include "util.cpp"
 #include "maple_functions.h"
+#include "posture_orientation.h"
+
 
 using namespace std;
 

@@ -31,6 +31,7 @@ lib:
 	g++ $(CXXFLAGS) -c igm_versions.cpp -o $(OBJ_DIR)/igm_versions.o $(INCLUDE_DIRS)
 	g++ $(CXXFLAGS) -c joint_bounds.cpp -o $(OBJ_DIR)/joint_bounds.o $(INCLUDE_DIRS)
 	g++ $(CXXFLAGS) -c model_state.cpp -o $(OBJ_DIR)/model_state.o $(INCLUDE_DIRS)
+	g++ $(CXXFLAGS) -c posture_orientation.cpp -o $(OBJ_DIR)/posture_orientation.o $(INCLUDE_DIRS)
 
 	$(AR) -r $(LIB_DIR)/libnaoigm.a \
 	$(OBJ_DIR)/from_LLeg_1.o \
@@ -47,6 +48,7 @@ lib:
 	$(OBJ_DIR)/igm_versions.o \
 	$(OBJ_DIR)/joint_bounds.o \
 	$(OBJ_DIR)/model_state.o \
+	$(OBJ_DIR)/posture_orientation.o \
 	$(OBJ_DIR)/igm.o 
 
 leg2joints:
