@@ -91,11 +91,8 @@ class nao_igm
         void setCoM (const double, const double, const double);
         void setSwingFootPosture (const double *, const double, const double, const double);
 
-#ifdef ENABLE_ALL_IGM_VERSIONS
         int igm_1(double *, double *);
         int igm_2(double *, double *, double *);
-#endif
-
         int igm_3(double *, double *, double *);
         int igm_4(double *, double *, double *, const double *, const double);
 

@@ -1,8 +1,8 @@
 OBJ_DIR = ./obj
 LIB_DIR = ../lib
 INCLUDE_DIRS = -I../include -I/usr/local/include/eigen2 -I/usr/include
-CFLAGS = -Wall -O3 -pedantic -Wshadow -DNDEBUG -g
-CXXFLAGS = -Wall -O3 -DNDEBUG -DENABLE_ALL_IGM_VERSIONS -g
+CFLAGS = -Wall -O3 -pedantic -Wshadow -DNDEBUG
+CXXFLAGS = -Wall -O3 -DNDEBUG
 AR = ar
 
 

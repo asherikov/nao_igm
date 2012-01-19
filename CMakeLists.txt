@@ -29,16 +29,20 @@ set (IGM_SRC_DIR "${PROJECT_SOURCE_DIR}/nao_model")
 set (IGM_SRC "${IGM_SRC_DIR}/JacCoM.c"
              "${IGM_SRC_DIR}/JacCoM_a.c"
              "${IGM_SRC_DIR}/Leg2EE.c"
-#             "${IGM_SRC_DIR}/from_LLeg_1.c"
-#             "${IGM_SRC_DIR}/from_LLeg_2.c"
+             "${IGM_SRC_DIR}/from_LLeg_1.c"
+             "${IGM_SRC_DIR}/from_LLeg_2.c"
              "${IGM_SRC_DIR}/from_LLeg_3.c"
              "${IGM_SRC_DIR}/from_LLeg_4.c"
-#             "${IGM_SRC_DIR}/from_RLeg_1.c"
-#             "${IGM_SRC_DIR}/from_RLeg_2.c"
+             "${IGM_SRC_DIR}/from_RLeg_1.c"
+             "${IGM_SRC_DIR}/from_RLeg_2.c"
              "${IGM_SRC_DIR}/from_RLeg_3.c"
              "${IGM_SRC_DIR}/from_RLeg_4.c"
              "${IGM_SRC_DIR}/igm_versions.cpp"
-             "${IGM_SRC_DIR}/igm.cpp")
+             "${IGM_SRC_DIR}/igm.cpp"
+             "${IGM_SRC_DIR}/joint_bounds.cpp"
+             "${IGM_SRC_DIR}/model_state.cpp"
+             "${IGM_SRC_DIR}/posture_orientation.cpp")
+
 
 
 if (LEG2JOINTS_ENABLE)

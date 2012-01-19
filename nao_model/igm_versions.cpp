@@ -7,7 +7,6 @@
 #include "maple_functions.h"
 
 
-#ifdef ENABLE_ALL_IGM_VERSIONS
 /** \brief Solves the Inverse Geometric Problem (IGM). Constraints for (x, y, z, X(alpha), Y(beta),
     Z(gamma)) of the foot not in support as well as (x, y, z, X(alpha), Y(beta)) of the torso can be
     imposed.
@@ -184,7 +183,6 @@ int nao_igm::igm_2(double *LegT, double *CoM, double *RotTorso)
 
     return(iter);
 }
-#endif
 
 
 /** \brief Solves the Inverse Geometric Problem (IGM). Constraints for (x, y, z, X(alpha), Y(beta),
