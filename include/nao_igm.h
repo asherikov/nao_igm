@@ -2,7 +2,6 @@
  * @file
  * @author Alexander Sherikov
  * @date 02.12.2011 15:17:52 MSK
-@todo Remove different variants of igm.
  */
 
 

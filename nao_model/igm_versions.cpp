@@ -211,10 +211,6 @@ int nao_igm::igm_2(double *LegT, double *CoM, double *RotTorso)
 */
 int nao_igm::igm_3(double *LegT, double *CoM, double *RotTorso)
 {
-    /**
-    @todo Some parameters are defined in the class, probably we do not need to specify them explicitly.
-    */
-
     const int N = LOWER_JOINTS_NUM;
 
     double out[N*N+N];
