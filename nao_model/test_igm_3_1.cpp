@@ -55,11 +55,11 @@ int main(int argc, char** argv)
         for (int j=0; j<STATE_VAR_NUM; j++) // every time start from q0
             nao.state.q[j] = q0[j];
 
-        iter = nao.igm_3(nao.swing_foot_posture, nao.CoM_position, nao.torso_orientation);
+        iter = nao.igm();
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
-    printf(" time (igm_3) = % f\n", cTime/test_N);
+    printf(" time (igm) = % f\n", cTime/test_N);
 
     cout << "iter = " << iter << endl;
 

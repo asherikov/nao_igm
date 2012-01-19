@@ -16,17 +16,8 @@
  ****************************************/
 
 extern "C" {
-#ifdef ENABLE_ALL_IGM_VERSIONS
-  void from_LLeg_1(double *q, double *LetT, double *TorsoT, double *out);
-  void from_RLeg_1(double *q, double *LetT, double *TorsoT, double *out);
-  void from_LLeg_2(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
-  void from_RLeg_2(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
-#endif
-
   void from_LLeg_3(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
   void from_RLeg_3(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
-  void from_LLeg_4(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
-  void from_RLeg_4(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
 
   void LLeg2RLeg(double *q,double *T);
   void LLeg2LHand(double *q,double *T);
