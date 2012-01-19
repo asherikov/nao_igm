@@ -3,3 +3,11 @@ Inverse geometrical model for Nao.
 Requirements:
     Eigen v.2
     GNU make
+
+Note, that there are other versions of igm() function, the respective source
+files are kept in a separate branch (or they can be regenerated using Maple): 
+    https://github.com/asherikov/nao_igm/tree/experimental
+All versions are described in detail in file 
+    ./nao_model/MapleCodeGeneration/Readme_M.txt
+In the current branch we use version 3, versions 1 and 2 use different 
+Jacobian and the 4'th version is a bit slow.
