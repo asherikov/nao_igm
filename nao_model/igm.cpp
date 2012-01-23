@@ -145,12 +145,14 @@ void nao_igm::switchSupportFoot()
     if (state.support_foot == IGM_SUPPORT_LEFT)
     {
         state.support_foot = IGM_SUPPORT_RIGHT;
+        state_sensor.support_foot = IGM_SUPPORT_RIGHT;
     }
     else
     {
         if (state.support_foot == IGM_SUPPORT_RIGHT)
         {
             state.support_foot = IGM_SUPPORT_LEFT;
+            state_sensor.support_foot = IGM_SUPPORT_LEFT;
         }
     }
 
