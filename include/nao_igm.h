@@ -93,6 +93,7 @@ class nao_igm
         int igm ();
 
         modelState state;
+        modelState state_sensor;
 
 
         double swing_foot_posture[POSTURE_MATRIX_SIZE];
