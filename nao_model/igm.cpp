@@ -36,7 +36,7 @@ void nao_igm::setFeetPostures (
 {
     if (state.support_foot == IGM_SUPPORT_LEFT)
     {
-        setSupportPosture (left_foot_position, 0.0, 0.0, right_foot_position[3]);
+        setSupportPosture (left_foot_position, 0.0, 0.0, left_foot_position[3]);
         initPosture (right_foot_position, 0.0, 0.0, right_foot_position[3], swing_foot_posture);
     }
     else
@@ -61,13 +61,16 @@ void nao_igm::setSupportPosture (
         const double pitch,
         const double yaw)
 {
-    state.q[SUPPORT_FOOT_POS_START]     = state_sensor.q[SUPPORT_FOOT_POS_START]     = support_foot_position[0];
-    state.q[SUPPORT_FOOT_POS_START + 1] = state_sensor.q[SUPPORT_FOOT_POS_START + 1] = support_foot_position[1];
-    state.q[SUPPORT_FOOT_POS_START + 2] = state_sensor.q[SUPPORT_FOOT_POS_START + 2] = support_foot_position[2];
+    state.q[SUPPORT_FOOT_POS_START]     = support_foot_position[0];
+    state.q[SUPPORT_FOOT_POS_START + 1] = support_foot_position[1];
+    state.q[SUPPORT_FOOT_POS_START + 2] = support_foot_position[2];
     rpy2R (roll, pitch, yaw, &state.q[SUPPORT_FOOT_ORIENTATION_START]);
-    rpy2R (roll, pitch, yaw, &state_sensor.q[SUPPORT_FOOT_ORIENTATION_START]);
-}
 
+    for (int i = SUPPORT_FOOT_POS_START; i < STATE_VAR_NUM; i++)
+    {
+        state_sensor.q[i] = state.q[i];
+    }
+}
 
 
 
@@ -103,24 +106,26 @@ void nao_igm::init(
         const double z, 
         const double *sup_orientation)
 {
-    state.q[SUPPORT_FOOT_POS_START]     = state_sensor.q[SUPPORT_FOOT_POS_START]     = x;
-    state.q[SUPPORT_FOOT_POS_START + 1] = state_sensor.q[SUPPORT_FOOT_POS_START + 1] = y;
-    state.q[SUPPORT_FOOT_POS_START + 2] = state_sensor.q[SUPPORT_FOOT_POS_START + 2] = z;
+    state.q[SUPPORT_FOOT_POS_START]     = x;
+    state.q[SUPPORT_FOOT_POS_START + 1] = y;
+    state.q[SUPPORT_FOOT_POS_START + 2] = z;
 
 
     for (int i = SUPPORT_FOOT_ORIENTATION_START; 
             i < SUPPORT_FOOT_ORIENTATION_START + SUPPORT_FOOT_ORIENTATION_NUM; 
             i++)
     {
-        state.q[i] = state_sensor.q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
+        state.q[i] = sup_orientation[i - SUPPORT_FOOT_ORIENTATION_START];
     }
 
-    for (int i = 0; i < JOINTS_NUM; i++)
+
+    for (int i = 0; i < STATE_VAR_NUM; i++)
     {
         state_sensor.q[i] = state.q[i];
     }
+    state.support_foot = state_sensor.support_foot = support_foot_;
 
-    state.support_foot = support_foot_;
+
     double torso_posture[POSTURE_MATRIX_SIZE];
     if (state.support_foot == IGM_SUPPORT_LEFT)
     {
@@ -145,21 +150,21 @@ void nao_igm::init(
     @param[in] x x-position
     @param[in] y y-position
     @param[in] z z-position
-    @param[in] alpha x-rotation
-    @param[in] beta y-rotation
-    @param[in] gamma z-rotation
+    @param[in] roll x-rotation
+    @param[in] pitch y-rotation
+    @param[in] yaw z-rotation
 */
 void nao_igm::init(
         const igmSupportFoot support_foot_, 
         const double x, 
         const double y, 
         const double z, 
-        const double alpha, 
-        const double beta, 
-        const double gamma)
+        const double roll, 
+        const double pitch, 
+        const double yaw)
 {
     double Rot[ORIENTATION_MATRIX_SIZE];
-    rpy2R(alpha, beta, gamma, Rot);
+    rpy2R(roll, pitch, yaw, Rot);
     init(support_foot_, x, y, z, Rot);
 }
 
@@ -172,27 +177,25 @@ void nao_igm::switchSupportFoot()
 {
     if (state.support_foot == IGM_SUPPORT_LEFT)
     {
-        state.support_foot = IGM_SUPPORT_RIGHT;
-        state_sensor.support_foot = IGM_SUPPORT_RIGHT;
+        state.support_foot = state_sensor.support_foot = IGM_SUPPORT_RIGHT;
     }
     else
     {
         if (state.support_foot == IGM_SUPPORT_RIGHT)
         {
-            state.support_foot = IGM_SUPPORT_LEFT;
-            state_sensor.support_foot = IGM_SUPPORT_LEFT;
+            state.support_foot = state_sensor.support_foot = IGM_SUPPORT_LEFT;
         }
     }
 
-    for (int i = SUPPORT_FOOT_POS_START; 
-            i < SUPPORT_FOOT_POS_START + SUPPORT_FOOT_POS_NUM; 
-            i++)
-    {
-        state.q[i] = state_sensor.q[i] = swing_foot_posture[12 + i - SUPPORT_FOOT_POS_START];
-    }
-
+    state.q[SUPPORT_FOOT_POS_START]     = swing_foot_posture[12];
+    state.q[SUPPORT_FOOT_POS_START + 1] = swing_foot_posture[13];
+    state.q[SUPPORT_FOOT_POS_START + 2] = swing_foot_posture[14];
     T2Rot (swing_foot_posture, &state.q[SUPPORT_FOOT_ORIENTATION_START]);
-    T2Rot (swing_foot_posture, &state_sensor.q[SUPPORT_FOOT_ORIENTATION_START]);
+
+    for (int i = SUPPORT_FOOT_POS_START; i < STATE_VAR_NUM; i++)
+    {
+        state_sensor.q[i] = state.q[i];
+    }
 }
 
 
