@@ -15,58 +15,88 @@
     (x, y, z, X(alpha), Y(beta), Z(gamma)) returns a posture Td that includes the offset.
 
     @param[in] Tc 4x4 homogeneous matrix
-    @param[out] Td 4x4 homogeneous matrix
 
     @param[in] x x-position offset
     @param[in] y y-position offset
     @param[in] z z-position offset
-    @param[in] alpha x-rotation offset
-    @param[in] beta y-rotation offset
-    @param[in] gamma z-rotation offset
+    @param[in] roll x-rotation offset
+    @param[in] pitch y-rotation offset
+    @param[in] yaw z-rotation offset
+
+    @param[out] Td 4x4 homogeneous matrix
 */
 void PostureOffset(
         const double *Tc, 
-        double *Td,
         const double x, 
         const double y, 
         const double z, 
-        const double alpha, 
-        const double beta, 
-        const double gamma)
+        const double roll, 
+        const double pitch, 
+        const double yaw,
+        double *Td)
 {
-    double tmp[4*4];
-    Euler2T(x, y, z, alpha, beta, gamma, tmp);
+    double tmp[POSTURE_MATRIX_SIZE];
+    initPosture (x, y, z, roll, pitch, yaw, tmp);
 
     Eigen::Map<Eigen::MatrixXd> TcE(Tc,4,4);
     Eigen::Map<Eigen::MatrixXd> T(tmp,4,4);
 
     T = TcE*T;
 
-    for (int i=0; i<4*4; i++)
+    for (int i=0; i<POSTURE_MATRIX_SIZE; i++)
+    {
         Td[i] = T(i);
+    }
 }
 
 
 
 /**
- * @brief Set position in a 4x4 homogeneous matrix.
+ * @brief Initialize a 4x4 homogeneous matrix.
  *
- * @param[in,out] Tc 4x4 homogeneous matrix.
  * @param[in] position 3x1 vector of coordinates.
  * @param[in] roll angle
  * @param[in] pitch angle
  * @param[in] yaw angle
+ * @param[in,out] Tc 4x4 homogeneous matrix.
  */
 void initPosture (
-        double *Tc, 
         const double *position,
         const double roll,
         const double pitch,
-        const double yaw)
+        const double yaw,
+        double *Tc) 
 {
-    Tc[12] = position[0];
-    Tc[13] = position[1];
-    Tc[14] = position[2];
+    initPosture (position[0], position[1], position[2], roll, pitch, yaw, Tc);
+}
+
+
+
+/**
+ * @brief Initialize a 4x4 homogeneous matrix.
+ *
+ * @param[in] x X coordinate
+ * @param[in] y Y coordinate
+ * @param[in] z Z coordinate
+ * @param[in] roll angle
+ * @param[in] pitch angle
+ * @param[in] yaw angle
+ * @param[in,out] Tc 4x4 homogeneous matrix.
+ */
+void initPosture (
+        const double x,
+        const double y,
+        const double z,
+        const double roll,
+        const double pitch,
+        const double yaw,
+        double *Tc) 
+{
+    Tc[12] = x;
+    Tc[13] = y;
+    Tc[14] = z;
+    Tc[15] = 1.0;
+    Tc[3] = Tc[7] = Tc[11] = 0.0;
 
     // form the rotation matrix corresponding to a set of roll-pitch-yaw angles
     rpy2R_hom (roll, pitch, yaw, Tc);
@@ -91,9 +121,9 @@ void RotationOffset(
         const double beta, 
         const double gamma)
 {
-    double tmp[3*3];
+    double tmp[ORIENTATION_MATRIX_SIZE];
 
-    Euler2Rot(alpha, beta, gamma, tmp);
+    rpy2R(alpha, beta, gamma, tmp);
 
     Eigen::Map<Eigen::MatrixXd> RcE(Rc,3,3);
     Eigen::Map<Eigen::MatrixXd> R(tmp,3,3);

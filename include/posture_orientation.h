@@ -8,21 +8,14 @@
 #ifndef POSTURE_ORIENTATION_H
 #define POSTURE_ORIENTATION_H
 
-/****************************************
- * INCLUDES 
- ****************************************/
-
-
 
 /****************************************
  * DEFINES
  ****************************************/
 
-
-
-/****************************************
- * TYPEDEFS 
- ****************************************/
+#define POSTURE_MATRIX_SIZE 4*4
+#define ORIENTATION_MATRIX_SIZE 3*3
+#define POSITION_VECTOR_SIZE 3
 
 
 
@@ -30,16 +23,31 @@
  * PROTOTYPES 
  ****************************************/
 
-void initPosture (double *, const double *, const double, const double, const double);
+void initPosture (
+        const double *, 
+        const double, 
+        const double, 
+        const double, 
+        double *);
+
+void initPosture (
+        const double, 
+        const double, 
+        const double, 
+        const double, 
+        const double, 
+        const double, 
+        double *);
+
 void PostureOffset(
         const double *,
-        double *,
         const double,
         const double,
         const double,
         const double,
         const double,
-        const double);
+        const double,
+        double *);
 
 
 void rpy2R(const double, const double, const double, double *);

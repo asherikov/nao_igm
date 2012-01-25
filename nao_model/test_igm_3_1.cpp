@@ -14,7 +14,6 @@
 #include "nao_igm.h"
 #include "util.cpp"
 #include "maple_functions.h"
-#include "posture_orientation.h"
 
 using namespace std;
 
@@ -41,7 +40,7 @@ int main(int argc, char** argv)
         q0[i] = nao.state.q[i];
 
 
-    PostureOffset(nao.swing_foot_posture, nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1); // some offset
+    PostureOffset(nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1, nao.swing_foot_posture); // some offset
     RotationOffset(nao.torso_orientation, nao.torso_orientation, 0.1,-0.1,0.1); // some offset
     nao.CoM_position[0] += 0.03;
     nao.CoM_position[1] += 0.02;

@@ -13,14 +13,8 @@
  ****************************************/
 
 #include "joints_sensors_id.h"
+#include "posture_orientation.h"
 
-/****************************************
- * DEFINES
- ****************************************/
-
-#define POSTURE_MATRIX_SIZE 4*4
-#define ORIENTATION_MATRIX_SIZE 3*3
-#define POSITION_VECTOR_SIZE 3
 
 
 /****************************************
@@ -88,7 +82,7 @@ class nao_igm
         void switchSupportFoot();
         int checkJointBounds();
         void setCoM (const double, const double, const double);
-        void setSwingFootPosture (const double *, const double, const double, const double);
+        void setFeetPostures (const double *, const double *);
 
         int igm ();
 
@@ -99,6 +93,10 @@ class nao_igm
         double swing_foot_posture[POSTURE_MATRIX_SIZE];
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
+
+
+    private:
+        void setSupportPosture (const double *, const double , const double , const double);
 };
 
 #endif // NAO_IGM_H

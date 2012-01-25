@@ -4,7 +4,6 @@
 #include "nao_igm.h"
 #include "maple_functions.h"
 #include "joint_bounds.h"
-#include "posture_orientation.h"
 
 
 
@@ -24,22 +23,51 @@ int nao_igm::checkJointBounds()
 
 
 /**
- * @brief Set position in a 4x4 homogeneous matrix.
+ * @brief Set feet postures.
  *
- * @param[in,out] Tc 4x4 homogeneous matrix.
- * @param[in] position 3x1 vector of coordinates.
+ * @param[in] left_foot_position 3x1 vector of coordinates + yaw angle.
+ * @param[in] right_foot_position 3x1 vector of coordinates + yaw angle.
+ *
+ * @note Roll and pitch angles are assumed to be 0.
+ */
+void nao_igm::setFeetPostures (
+        const double *left_foot_position,
+        const double *right_foot_position)
+{
+    if (state.support_foot == IGM_SUPPORT_LEFT)
+    {
+        setSupportPosture (left_foot_position, 0.0, 0.0, right_foot_position[3]);
+        initPosture (right_foot_position, 0.0, 0.0, right_foot_position[3], swing_foot_posture);
+    }
+    else
+    {
+        setSupportPosture (right_foot_position, 0.0, 0.0, right_foot_position[3]);
+        initPosture (left_foot_position, 0.0, 0.0, left_foot_position[3], swing_foot_posture);
+    }
+}
+
+
+/**
+ * @brief Set support foot posture.
+ *
+ * @param[in] support_foot_position 3x1 vector of coordinates
  * @param[in] roll angle
  * @param[in] pitch angle
  * @param[in] yaw angle
  */
-void nao_igm::setSwingFootPosture (
-        const double *position,
+void nao_igm::setSupportPosture (
+        const double *support_foot_position, 
         const double roll,
         const double pitch,
         const double yaw)
 {
-    initPosture (swing_foot_posture, position, roll, pitch, yaw);
+    state.q[SUPPORT_FOOT_POS_START]     = state_sensor.q[SUPPORT_FOOT_POS_START]     = support_foot_position[0];
+    state.q[SUPPORT_FOOT_POS_START + 1] = state_sensor.q[SUPPORT_FOOT_POS_START + 1] = support_foot_position[1];
+    state.q[SUPPORT_FOOT_POS_START + 2] = state_sensor.q[SUPPORT_FOOT_POS_START + 2] = support_foot_position[2];
+    rpy2R (roll, pitch, yaw, &state.q[SUPPORT_FOOT_ORIENTATION_START]);
+    rpy2R (roll, pitch, yaw, &state_sensor.q[SUPPORT_FOOT_ORIENTATION_START]);
 }
+
 
 
 
@@ -131,7 +159,7 @@ void nao_igm::init(
         const double gamma)
 {
     double Rot[ORIENTATION_MATRIX_SIZE];
-    Euler2Rot(alpha, beta, gamma, Rot);
+    rpy2R(alpha, beta, gamma, Rot);
     init(support_foot_, x, y, z, Rot);
 }
 

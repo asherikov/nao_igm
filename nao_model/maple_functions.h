@@ -9,8 +9,6 @@
 #define MAPLE_FUNCTIONS_H
 
 
-#include "public_maple_functions.h"
-
 /****************************************
  * PROTOTYPES 
  ****************************************/
