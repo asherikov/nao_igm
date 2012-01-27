@@ -23,45 +23,36 @@
  * PROTOTYPES 
  ****************************************/
 
-void initPosture (
-        const double *, 
-        const double, 
-        const double, 
-        const double, 
-        double *);
+class posture
+{
+    public:
+        void init (
+                const double *, 
+                const double, 
+                const double, 
+                const double);
 
-void initPosture (
-        const double, 
-        const double, 
-        const double, 
-        const double, 
-        const double, 
-        const double, 
-        double *);
-
-void PostureOffset(
-        const double *,
-        const double,
-        const double,
-        const double,
-        const double,
-        const double,
-        const double,
-        double *);
+        void init (
+                const double, 
+                const double, 
+                const double, 
+                const double, 
+                const double, 
+                const double);
 
 
-void rpy2R(const double, const double, const double, double *);
-void rpy2R_hom(const double, const double, const double, double *);
+
+        void getPosition (double *);
+        void getPositionDiff (const posture&, double *);
+        void setOrientation (const double *);
+        void getOrientation (double *);
 
 
-void RotationOffset(
-        const double *,
-        double *,
-        const double,
-        const double,
-        const double);
-void T2Rot(const double *, double *);
+        double data[POSTURE_MATRIX_SIZE];
+};
 
+
+void rpy2R (const double, const double, const double, double *);
 
 #endif // POSTURE_ORIENTATION_H
 

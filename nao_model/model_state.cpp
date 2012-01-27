@@ -40,12 +40,25 @@ void modelState::getCoM (double *CoM_pos)
 /**
  * @brief Compute position of the swing foot from joint angles.
  *
- * @param[in,out] swing_foot  3x1 vector of coordinates.
+ * @param[in,out] swing_foot_position  3x1 vector of coordinates.
  */
-void modelState::getSwingFoot (double * swing_foot)
+void modelState::getSwingFootPosition (double * swing_foot_position)
 {
-    double swing_foot_posture[POSTURE_MATRIX_SIZE];
+    posture swing_foot_posture;
 
+    getSwingFootPosture(swing_foot_posture.data);
+    swing_foot_posture.getPosition (swing_foot_position);
+}
+
+
+
+/**
+ * @brief Compute position of the swing foot from joint angles.
+ *
+ * @param[in,out] swing_foot_posture  homogeneous 4x4 matrix
+ */
+void modelState::getSwingFootPosture (double * swing_foot_posture)
+{
     if (support_foot == IGM_SUPPORT_LEFT)
     {
         LLeg2RLeg(q, swing_foot_posture);
@@ -54,12 +67,7 @@ void modelState::getSwingFoot (double * swing_foot)
     {
         RLeg2LLeg(q, swing_foot_posture);
     }
-
-    swing_foot[0] = swing_foot_posture[12];
-    swing_foot[1] = swing_foot_posture[13];
-    swing_foot[2] = swing_foot_posture[14];
 }
-
 
 
 /** @brief Sets the initial configuration of nao (lets call it the standard initial configuration)

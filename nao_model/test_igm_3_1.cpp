@@ -29,19 +29,17 @@ int main(int argc, char** argv)
 
     // set initial configuration
     double *q0 = new double[STATE_VAR_NUM];
-    double foot_orientation[9] = {
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0};
 
-    nao.init (IGM_SUPPORT_RIGHT, 0.0, 0.05, 0.0, foot_orientation);
+    nao.init (IGM_SUPPORT_RIGHT, 
+              0.0, 0.05, 0.0, 
+              0.0, 0.0, 0.0);
 
     for (int i=0; i<STATE_VAR_NUM; i++)
         q0[i] = nao.state.q[i];
 
 
-    PostureOffset(nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1, nao.swing_foot_posture); // some offset
-    RotationOffset(nao.torso_orientation, nao.torso_orientation, 0.1,-0.1,0.1); // some offset
+    postureOffset(nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1, nao.swing_foot_posture); // some offset
+    rotationOffset(nao.torso_orientation, 0.1,-0.1,0.1, nao.torso_orientation); // some offset
     nao.CoM_position[0] += 0.03;
     nao.CoM_position[1] += 0.02;
     nao.CoM_position[2] -= 0.01;
