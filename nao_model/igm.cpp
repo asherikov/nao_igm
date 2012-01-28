@@ -144,6 +144,8 @@ void nao_igm::init(
  * @brief Switch support foot.
  *
  * @param[in] position_error 3x1 position error vector
+ *
+ * @attention The error along z axis is ignored.
  */
 void nao_igm::switchSupportFoot(double *position_error)
 {
@@ -153,6 +155,8 @@ void nao_igm::switchSupportFoot(double *position_error)
 
 
     swing_foot_posture_sensor.getPosition (&state.q[SUPPORT_FOOT_POS_START]);
+    // reset z position
+    state.q[SUPPORT_FOOT_POS_START + 2] = 0.0; 
     swing_foot_posture_sensor.getOrientation (&state.q[SUPPORT_FOOT_ORIENTATION_START]);
 
 
