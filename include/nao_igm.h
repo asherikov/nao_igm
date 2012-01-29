@@ -78,7 +78,7 @@ class nao_igm
         int checkJointBounds();
         void setCoM (const double, const double, const double);
         void setFeetPostures (const double *, const double *);
-        void getFeetPositions (double *, double *);
+        void getFeetPositions (double *, double *, double *, double *);
 
         int igm ();
 

@@ -50,28 +50,35 @@ void nao_igm::setFeetPostures (
 /**
  * @brief Get feet positions.
  *
- * @param[in] left_foot_position 3x1 vector of coordinates
- * @param[in] right_foot_position 3x1 vector of coordinates
+ * @param[out] left_foot_expected 3x1 expected position vector
+ * @param[out] right_foot_expected 3x1 expected position vector
+ * @param[out] left_foot_computed 3x1 position vector determined using sensor data
+ * @param[out] right_foot_computed 3x1 position vector determined using sensor data
  *
- * @note Roll and pitch angles are assumed to be 0.
+ * @note Support foot position is assumed to be correct and there is no difference
+ * between the expected and 'real' positions.
  */
 void nao_igm::getFeetPositions (
-        double *left_foot_position,
-        double *right_foot_position)
+        double *left_foot_expected,
+        double *right_foot_expected,
+        double *left_foot_computed,
+        double *right_foot_computed)
 {
     if (state_model.support_foot == IGM_SUPPORT_LEFT)
     {
-        left_foot_position[0] = state_model.q[SUPPORT_FOOT_POS_START]    ;
-        left_foot_position[1] = state_model.q[SUPPORT_FOOT_POS_START + 1];
-        left_foot_position[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
-        swing_foot_posture.getPosition (right_foot_position);
+        left_foot_expected[0] = left_foot_computed[0] = state_model.q[SUPPORT_FOOT_POS_START]    ;
+        left_foot_expected[1] = left_foot_computed[1] = state_model.q[SUPPORT_FOOT_POS_START + 1];
+        left_foot_expected[2] = left_foot_computed[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
+        swing_foot_posture.getPosition (right_foot_expected);
+        state_sensor.getSwingFootPosition (right_foot_computed);
     }
     else
     {
-        right_foot_position[0] = state_model.q[SUPPORT_FOOT_POS_START]    ;
-        right_foot_position[1] = state_model.q[SUPPORT_FOOT_POS_START + 1];
-        right_foot_position[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
-        swing_foot_posture.getPosition (left_foot_position);
+        right_foot_expected[0] = right_foot_computed[0] = state_model.q[SUPPORT_FOOT_POS_START]    ;
+        right_foot_expected[1] = right_foot_computed[1] = state_model.q[SUPPORT_FOOT_POS_START + 1];
+        right_foot_expected[2] = right_foot_computed[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
+        swing_foot_posture.getPosition (left_foot_expected);
+        state_sensor.getSwingFootPosition (left_foot_computed);
     }
 }
 
