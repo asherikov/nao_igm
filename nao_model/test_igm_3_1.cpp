@@ -33,9 +33,11 @@ int main(int argc, char** argv)
     nao.init (IGM_SUPPORT_RIGHT, 
               0.0, 0.05, 0.0, 
               0.0, 0.0, 0.0);
-
     for (int i=0; i<STATE_VAR_NUM; i++)
-        q0[i] = nao.state.q[i];
+    {
+        q0[i] = nao.state_model.q[i];
+    }
+
 
 
     postureOffset(nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1, nao.swing_foot_posture); // some offset
@@ -50,7 +52,9 @@ int main(int argc, char** argv)
     for (int i=0 ; i<test_N ; i++)
     {
         for (int j=0; j<STATE_VAR_NUM; j++) // every time start from q0
-            nao.state.q[j] = q0[j];
+        {
+            nao.state_model.q[j] = q0[j];
+        }
 
         iter = nao.igm();
     }
@@ -60,7 +64,7 @@ int main(int argc, char** argv)
 
     cout << "iter = " << iter << endl;
 
-    MatrixPrint(1,12,nao.state.q,"q");
+    MatrixPrint(1,12,nao.state_model.q,"q");
 
     int check_bounds = nao.checkJointBounds();
     if (check_bounds >= 0)

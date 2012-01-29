@@ -82,7 +82,7 @@ class nao_igm
         int igm ();
 
 
-        modelState state;
+        modelState state_model;
         modelState state_sensor;
 
         posture swing_foot_posture;
