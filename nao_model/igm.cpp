@@ -48,6 +48,36 @@ void nao_igm::setFeetPostures (
 
 
 /**
+ * @brief Get feet positions.
+ *
+ * @param[in] left_foot_position 3x1 vector of coordinates
+ * @param[in] right_foot_position 3x1 vector of coordinates
+ *
+ * @note Roll and pitch angles are assumed to be 0.
+ */
+void nao_igm::getFeetPositions (
+        double *left_foot_position,
+        double *right_foot_position)
+{
+    if (state_model.support_foot == IGM_SUPPORT_LEFT)
+    {
+        left_foot_position[0] = state_model.q[SUPPORT_FOOT_POS_START]    ;
+        left_foot_position[1] = state_model.q[SUPPORT_FOOT_POS_START + 1];
+        left_foot_position[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
+        swing_foot_posture.getPosition (right_foot_position);
+    }
+    else
+    {
+        right_foot_position[0] = state_model.q[SUPPORT_FOOT_POS_START]    ;
+        right_foot_position[1] = state_model.q[SUPPORT_FOOT_POS_START + 1];
+        right_foot_position[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
+        swing_foot_posture.getPosition (left_foot_position);
+    }
+}
+
+
+
+/**
  * @brief Set support foot posture.
  *
  * @param[in] support_foot_position 3x1 vector of coordinates
@@ -125,17 +155,17 @@ void nao_igm::init(
 
 
     posture torso_posture;
-    if (state_model.support_foot == IGM_SUPPORT_LEFT)
+    if (state_sensor.support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(state_model.q, swing_foot_posture.data);
-        LLeg2Torso(state_model.q, torso_posture.data);
-        LLeg2CoM(state_model.q, CoM_position);
+        LLeg2RLeg(state_sensor.q, swing_foot_posture.data);
+        LLeg2Torso(state_sensor.q, torso_posture.data);
+        LLeg2CoM(state_sensor.q, CoM_position);
     }
     else
     {
-        RLeg2LLeg(state_model.q, swing_foot_posture.data);
-        RLeg2Torso(state_model.q, torso_posture.data);
-        RLeg2CoM(state_model.q, CoM_position);
+        RLeg2LLeg(state_sensor.q, swing_foot_posture.data);
+        RLeg2Torso(state_sensor.q, torso_posture.data);
+        RLeg2CoM(state_sensor.q, CoM_position);
     }
     torso_posture.getOrientation(torso_orientation);
 }
