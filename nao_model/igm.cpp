@@ -254,8 +254,34 @@ int nao_igm::igm()
             from_RLeg_3(state_model.q, swing_foot_posture.data, CoM_position, torso_orientation, out);
         }
 
+
+        
+        Eigen::MatrixXd A(N-1, N);
+        Eigen::VectorXd err(N-1);
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0, k = 0; j < N; ++j)
+            {
+                if (j != 9) // ignore the 9th line, which corresponds to the constraint
+                {           // on the torso orientation (rotation around x axis)
+                    A(k,i) = out[i*N+j];
+                    ++k;
+                }
+            }
+        }
+        for (int i = 0, j = 0; i < N; ++i)
+        {
+            if (i != 9) // ignore the 9th element, which corresponds to the constraint
+            {           // on the torso orientation (rotation around x axis)
+                err(j) = out[N*N+i];
+                ++j;
+            }
+        }
+
+        /*
         Eigen::Map<Eigen::MatrixXd> A(out,N,N);
         Eigen::Map<Eigen::VectorXd> err(out+N*N,N);
+        */
 
         // Solve KKT system
         llt.compute(A*A.transpose());
