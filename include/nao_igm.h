@@ -67,6 +67,12 @@ class modelState
                 const double,
                 const double,
                 const double);
+        void initSupportPosture (
+                const double,
+                const double,
+                const double,
+                const double);
+        void copySupportPosture (const modelState &);
 
 
         double q[STATE_VAR_NUM];
@@ -103,10 +109,6 @@ class nao_igm
         Transform<double,3> swing_foot_posture;
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
-
-
-    private:
-        void setSupportPosture (const double *, const double , const double , const double);
 };
 
 #endif // NAO_IGM_H

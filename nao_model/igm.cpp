@@ -36,18 +36,28 @@ void nao_igm::setFeetPostures (
 {
     if (state_model.support_foot == IGM_SUPPORT_LEFT)
     {
-        setSupportPosture (left_foot_position, 0.0, 0.0, left_foot_position[3]);
+        state_sensor.initSupportPosture(
+                left_foot_position[0],
+                left_foot_position[1],
+                left_foot_position[2],
+                left_foot_position[3]);
         swing_foot_posture = 
             Translation<double,3>(right_foot_position[0], right_foot_position[1], right_foot_position[2]) *
             AngleAxisd(right_foot_position[3], Vector3d::UnitZ());
     }
     else
     {
-        setSupportPosture (right_foot_position, 0.0, 0.0, right_foot_position[3]);
+        state_sensor.initSupportPosture(
+                right_foot_position[0],
+                right_foot_position[1],
+                right_foot_position[2],
+                right_foot_position[3]);
         swing_foot_posture = 
             Translation<double,3>(left_foot_position[0], left_foot_position[1], left_foot_position[2]) *
             AngleAxisd(left_foot_position[3], Vector3d::UnitZ());
     }
+
+    state_sensor.copySupportPosture(state_model);
 }
 
 
@@ -83,34 +93,6 @@ void nao_igm::getFeetPositions (
         right_foot_expected[2] = right_foot_computed[2] = state_model.q[SUPPORT_FOOT_POS_START + 2];
         Vector3d::Map(left_foot_expected) = swing_foot_posture.translation();
         state_sensor.getSwingFootPosition (left_foot_computed);
-    }
-}
-
-
-
-/**
- * @brief Set support foot posture.
- *
- * @param[in] support_foot_position 3x1 vector of coordinates
- * @param[in] roll angle
- * @param[in] pitch angle
- * @param[in] yaw angle
- */
-void nao_igm::setSupportPosture (
-        const double *support_foot_position, 
-        const double roll,
-        const double pitch,
-        const double yaw)
-{
-    state_sensor.initSupportPosture(
-            support_foot_position[0],
-            support_foot_position[1],
-            support_foot_position[2],
-            roll, pitch, yaw);
-
-    for (int i = SUPPORT_FOOT_POS_START; i < STATE_VAR_NUM; i++)
-    {
-        state_sensor.q[i] = state_model.q[i];
     }
 }
 

@@ -17,6 +17,45 @@ modelState::modelState()
 }
 
 
+
+/**
+ * @brief Copy support foot posture from a given state.
+ *
+ * @param[in] from copy from this state
+ */
+void modelState::copySupportPosture(const modelState& from)
+{
+    for (int i = SUPPORT_FOOT_POS_START; i < STATE_VAR_NUM; i++)
+    {
+        q[i] = from.q[i];
+    }
+}
+
+
+
+/**
+ * @brief Init posture of the support foot (roll = pitch = 0.0).
+ *
+ * @param[in] x position
+ * @param[in] y position
+ * @param[in] z position
+ * @param[in] yaw angle
+ */
+void modelState::initSupportPosture (
+        const double x,
+        const double y,
+        const double z,
+        const double yaw)
+{
+    q[SUPPORT_FOOT_POS_START]     = x;
+    q[SUPPORT_FOOT_POS_START + 1] = y;
+    q[SUPPORT_FOOT_POS_START + 2] = z;
+    Matrix3d::Map(&q[SUPPORT_FOOT_ORIENTATION_START]) =
+        AngleAxisd(yaw, Vector3d::UnitZ()).toRotationMatrix();
+}
+
+
+
 /**
  * @brief Init posture of the support foot.
  *
