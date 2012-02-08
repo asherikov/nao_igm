@@ -12,14 +12,17 @@
  * INCLUDES 
  ****************************************/
 
+#include <Eigen/Geometry>
 #include "joints_sensors_id.h"
-#include "posture_orientation.h"
 
 
 
 /****************************************
  * TYPEDEFS 
  ****************************************/
+
+using namespace Eigen;
+
 
 enum igmSupportFoot {
     IGM_SUPPORT_RIGHT = 0,
@@ -41,7 +44,11 @@ enum supportFootOrientation {
     SUPPORT_FOOT_ORIENTATION_NUM = 9
 };
 
+
 #define STATE_VAR_NUM  (JOINTS_NUM + SUPPORT_FOOT_POS_NUM + SUPPORT_FOOT_ORIENTATION_NUM)
+#define ORIENTATION_MATRIX_SIZE 3*3
+#define POSITION_VECTOR_SIZE 3
+
 
 
 class modelState
@@ -53,6 +60,13 @@ class modelState
         void getSwingFootPosture (double *);
         void getSwingFootPosition (double *);
         void initJointAngles();
+        void initSupportPosture (
+                const double,
+                const double,
+                const double,
+                const double,
+                const double,
+                const double);
 
 
         double q[STATE_VAR_NUM];
@@ -86,7 +100,7 @@ class nao_igm
         modelState state_model;
         modelState state_sensor;
 
-        posture swing_foot_posture;
+        Transform<double,3> swing_foot_posture;
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
 
@@ -96,4 +110,3 @@ class nao_igm
 };
 
 #endif // NAO_IGM_H
-

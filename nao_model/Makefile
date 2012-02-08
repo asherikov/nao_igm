@@ -2,7 +2,7 @@ OBJ_DIR = ./obj
 LIB_DIR = ../lib
 INCLUDE_DIRS = -I../include -I/usr/local/include/eigen2 -I/usr/include
 CFLAGS = -Wall -O3 -pedantic -Wshadow -DNDEBUG -g
-CXXFLAGS = -Wall -O3 -DNDEBUG
+CXXFLAGS = -Wall -O3 -DNDEBUG -g
 AR = ar
 
 
@@ -23,7 +23,6 @@ lib:
 	g++ $(CXXFLAGS) -c igm.cpp -o $(OBJ_DIR)/igm.o $(INCLUDE_DIRS)
 	g++ $(CXXFLAGS) -c joint_bounds.cpp -o $(OBJ_DIR)/joint_bounds.o $(INCLUDE_DIRS)
 	g++ $(CXXFLAGS) -c model_state.cpp -o $(OBJ_DIR)/model_state.o $(INCLUDE_DIRS)
-	g++ $(CXXFLAGS) -c posture_orientation.cpp -o $(OBJ_DIR)/posture_orientation.o $(INCLUDE_DIRS)
 
 	$(AR) -r $(LIB_DIR)/libnaoigm.a \
 	$(OBJ_DIR)/from_LLeg_3.o \

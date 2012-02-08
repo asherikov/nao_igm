@@ -33,8 +33,7 @@ set (IGM_SRC "${IGM_SRC_DIR}/JacCoM.c"
              "${IGM_SRC_DIR}/from_RLeg_3.c"
              "${IGM_SRC_DIR}/igm.cpp"
              "${IGM_SRC_DIR}/joint_bounds.cpp"
-             "${IGM_SRC_DIR}/model_state.cpp"
-             "${IGM_SRC_DIR}/posture_orientation.cpp")
+             "${IGM_SRC_DIR}/model_state.cpp")
 
 
 if (LEG2JOINTS_ENABLE)

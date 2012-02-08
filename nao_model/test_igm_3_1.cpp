@@ -39,9 +39,18 @@ int main(int argc, char** argv)
     }
 
 
+    nao.swing_foot_posture = 
+        nao.swing_foot_posture *
+        Translation<double,3>(-0.02,0.01,0.02) *
+        AngleAxisd(0.1, Vector3d::UnitX()) *
+        AngleAxisd(0.1, Vector3d::UnitY()) *
+        AngleAxisd(0.1, Vector3d::UnitZ());
 
-    postureOffset(nao.swing_foot_posture, -0.02,0.01,0.02,0.1,0.1,0.1, nao.swing_foot_posture); // some offset
-    rotationOffset(nao.torso_orientation, 0.1,-0.1,0.1, nao.torso_orientation); // some offset
+    Matrix3d::Map(nao.torso_orientation) = Matrix3d::Map(nao.torso_orientation)
+                      * (AngleAxisd(0.1, Vector3d::UnitX())
+                      *  AngleAxisd(-0.1, Vector3d::UnitY())
+                      *  AngleAxisd(0.1, Vector3d::UnitZ())).toRotationMatrix();
+
     nao.CoM_position[0] += 0.03;
     nao.CoM_position[1] += 0.02;
     nao.CoM_position[2] -= 0.01;

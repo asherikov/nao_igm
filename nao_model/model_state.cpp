@@ -17,6 +17,34 @@ modelState::modelState()
 }
 
 
+/**
+ * @brief Init posture of the support foot.
+ *
+ * @param[in] x position
+ * @param[in] y position
+ * @param[in] z position
+ * @param[in] roll angle
+ * @param[in] pitch angle
+ * @param[in] yaw angle
+ */
+void modelState::initSupportPosture (
+        const double x,
+        const double y,
+        const double z,
+        const double roll,
+        const double pitch,
+        const double yaw)
+{
+    q[SUPPORT_FOOT_POS_START]     = x;
+    q[SUPPORT_FOOT_POS_START + 1] = y;
+    q[SUPPORT_FOOT_POS_START + 2] = z;
+    Matrix3d::Map(&q[SUPPORT_FOOT_ORIENTATION_START]) =
+                (AngleAxisd(roll, Vector3d::UnitX())
+                * AngleAxisd(pitch, Vector3d::UnitY())
+                * AngleAxisd(yaw, Vector3d::UnitZ())).toRotationMatrix();
+}
+
+
 
 /**
  * @brief Compute position of the CoM from joint angles.
@@ -44,10 +72,10 @@ void modelState::getCoM (double *CoM_pos)
  */
 void modelState::getSwingFootPosition (double * swing_foot_position)
 {
-    posture swing_foot_posture;
+    Transform<double, 3> swing_foot_posture;
 
-    getSwingFootPosture(swing_foot_posture.data);
-    swing_foot_posture.getPosition (swing_foot_position);
+    getSwingFootPosture(swing_foot_posture.data());
+    Vector3d::Map(swing_foot_position) = swing_foot_posture.translation();
 }
 
 
