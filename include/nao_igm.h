@@ -60,6 +60,7 @@ class modelState
         void getSwingFootPosture (double *);
         void getSwingFootPosition (double *);
         void initJointAngles();
+        int checkJointBounds();
         void initSupportPosture (
                 const double,
                 const double,
@@ -95,12 +96,11 @@ class nao_igm
 
 
         void switchSupportFoot (double *);
-        int checkJointBounds();
         void setCoM (const double, const double, const double);
         void setFeetPostures (const double *, const double *);
         void getFeetPositions (double *, double *, double *, double *);
 
-        int igm ();
+        int igm (modelState &);
 
 
         modelState state_model;

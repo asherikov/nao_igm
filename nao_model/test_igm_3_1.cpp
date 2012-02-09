@@ -65,7 +65,7 @@ int main(int argc, char** argv)
             nao.state_model.q[j] = q0[j];
         }
 
-        iter = nao.igm();
+        iter = nao.igm(nao.state_model);
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 
     MatrixPrint(1,12,nao.state_model.q,"q");
 
-    int check_bounds = nao.checkJointBounds();
+    int check_bounds = nao.state_model.checkJointBounds();
     if (check_bounds >= 0)
     {
         cout << "Bounds are violated! ID:" << check_bounds << endl;

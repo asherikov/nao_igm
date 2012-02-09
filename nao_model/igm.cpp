@@ -3,22 +3,6 @@
 
 #include "nao_igm.h"
 #include "maple_functions.h"
-#include "joint_bounds.h"
-
-
-
-/**
- * @brief Check that all joint angles lie within bounds.
- *
- * @return -1 if all values are corrent, id of the first joint violating the
- * bounds.
- *
- * @attention No collision checks!
- */
-int nao_igm::checkJointBounds()
-{
-    return(joint_bounds.check(state_model.q));
-}
 
 
 
@@ -206,7 +190,7 @@ void nao_igm::switchSupportFoot(double *position_error)
     search for a solution (i.e., the initial guess). On output q contains a solution of the
     inverse kinematics problem (if iter != -1). Only q[0]...q[11] are altered.
 */
-int nao_igm::igm()
+int nao_igm::igm(modelState &qstate)
 {
     int N = LOWER_JOINTS_NUM;
     int num_constraints = N-1; // one is skipped
@@ -225,13 +209,13 @@ int nao_igm::igm()
     while (norm_dq > tol && iter != -1)
     {
         // Form data
-        if (state_model.support_foot == IGM_SUPPORT_LEFT)
+        if (qstate.support_foot == IGM_SUPPORT_LEFT)
         {
-            from_LLeg_3(state_model.q, swing_foot_posture.data(), CoM_position, torso_orientation, out);
+            from_LLeg_3(qstate.q, swing_foot_posture.data(), CoM_position, torso_orientation, out);
         }
         else
         {
-            from_RLeg_3(state_model.q, swing_foot_posture.data(), CoM_position, torso_orientation, out);
+            from_RLeg_3(qstate.q, swing_foot_posture.data(), CoM_position, torso_orientation, out);
         }
 
         
@@ -264,7 +248,7 @@ int nao_igm::igm()
         // Update angles (of legs)
         for (int i=0; i<LOWER_JOINTS_NUM; i++)
         {
-            state_model.q[i] += dq[i];
+            qstate.q[i] += dq[i];
         }
 
         // Check termination condition

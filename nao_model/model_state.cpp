@@ -6,6 +6,8 @@
 
 #include "nao_igm.h"
 #include "maple_functions.h"
+#include "joint_bounds.h"
+
 
 
 /**
@@ -16,6 +18,19 @@ modelState::modelState()
     initJointAngles();
 }
 
+
+/**
+ * @brief Check that all joint angles lie within bounds.
+ *
+ * @return -1 if all values are corrent, id of the first joint violating the
+ * bounds.
+ *
+ * @attention No collision checks!
+ */
+int modelState::checkJointBounds()
+{
+    return(joint_bounds.check(q));
+}
 
 
 /**
