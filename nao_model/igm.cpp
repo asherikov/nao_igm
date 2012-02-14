@@ -239,19 +239,21 @@ void nao_igm::getSwingFootPosture (jointState& joints, Transform<double,3>& swin
 */
 int nao_igm::igm(jointState &qstate)
 {
-    int N = LOWER_JOINTS_NUM;
-    int num_constraints = N-1; // one is skipped
+    const int num_constraints = LOWER_JOINTS_NUM-1; // one is skipped
 
-    double out[N*N+N];
-    VectorXd dq(N);
-    Eigen::LLT<Eigen::MatrixXd> llt;
+    Matrix<double, num_constraints, num_constraints> AAT;
+    Matrix<double, LOWER_JOINTS_NUM, 1> dq;
+
+    double out[num_constraints*LOWER_JOINTS_NUM + num_constraints];
+    Map<MatrixXd> A(out,num_constraints,LOWER_JOINTS_NUM);
+    Map<VectorXd> err(out+num_constraints*LOWER_JOINTS_NUM,num_constraints);
 
     double tol = 0.0005;
     int max_iter = 20;
-    int iter = 0;
+    int iter;
     double norm_dq = 1.0;
 
-    while (norm_dq > tol && iter != -1)
+    for (iter = 0; (norm_dq > tol) && (iter <= max_iter); ++iter)
     {
         // Form data
         if (support_foot == IGM_SUPPORT_LEFT)
@@ -275,34 +277,21 @@ int nao_igm::igm(jointState &qstate)
                     out);
         }
 
-        Eigen::Map<Eigen::MatrixXd> A(out,num_constraints,N);
-        Eigen::Map<Eigen::VectorXd> err(out+num_constraints*N,num_constraints);
-
-
         // Solve KKT system
-        llt.compute(A*A.transpose());
-        llt.solve(-err, &dq);
-        dq = -A.transpose()*dq;
+        AAT = A*A.transpose();
+        AAT.llt().solveInPlace(err);
+        dq = A.transpose()*err;
 
         // Update angles (of legs)
-        for (int i=0; i<LOWER_JOINTS_NUM; i++)
-        {
-            qstate.q[i] += dq[i];
-        }
+        VectorXd::Map (qstate.q, LOWER_JOINTS_NUM) += dq;
 
-        // Check termination condition
-        norm_dq = 0;
-        for (int i=0; i < N; i++)
-        {
-            norm_dq += dq[i]*dq[i];
-        }
-        norm_dq = sqrt(norm_dq);
+        // Compute the norm of dq
+        norm_dq = dq.norm();
+    }
 
-        iter++;
-        if (iter > max_iter)
-        {
-            iter = -1;
-        }
+    if (iter > max_iter)
+    {
+        iter = -1;
     }
 
     return(iter);
