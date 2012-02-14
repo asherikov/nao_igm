@@ -58,13 +58,13 @@ void nao_igm::getFeetPositions (
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_expected) = support_foot_posture.translation();
+        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_computed) = support_foot_posture.translation();
         Vector3d::Map(right_foot_expected) = swing_foot_posture.translation();
         getSwingFootPosition (state_sensor, right_foot_computed);
     }
     else
     {
-        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_expected) = support_foot_posture.translation();
+        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = support_foot_posture.translation();
         Vector3d::Map(left_foot_expected) = swing_foot_posture.translation();
         getSwingFootPosition (state_sensor, left_foot_computed);
     }
