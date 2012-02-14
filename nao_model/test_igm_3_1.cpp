@@ -28,15 +28,12 @@ int main(int argc, char** argv)
 
 
     // set initial configuration
-    double *q0 = new double[STATE_VAR_NUM];
+    jointState q0;
 
     nao.init (IGM_SUPPORT_RIGHT, 
               0.0, 0.05, 0.0, 
               0.0, 0.0, 0.0);
-    for (int i=0; i<STATE_VAR_NUM; i++)
-    {
-        q0[i] = nao.state_model.q[i];
-    }
+    q0 = nao.state_model;
 
 
     nao.swing_foot_posture = 
@@ -60,11 +57,7 @@ int main(int argc, char** argv)
     gettimeofday(&start,0);
     for (int i=0 ; i<test_N ; i++)
     {
-        for (int j=0; j<STATE_VAR_NUM; j++) // every time start from q0
-        {
-            nao.state_model.q[j] = q0[j];
-        }
-
+        nao.state_model = q0;
         iter = nao.igm(nao.state_model);
     }
     gettimeofday(&end,0);
@@ -84,8 +77,6 @@ int main(int argc, char** argv)
     {
         cout << "Bounds are ok." << endl;
     }
-
-    delete q0;
 
     return 0;
 }

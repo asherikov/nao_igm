@@ -51,33 +51,23 @@ enum supportFootOrientation {
 
 
 
-class modelState
+class jointState
 {
     public:
-        modelState();
+        jointState();
 
-        void getCoM (double *);
-        void getSwingFootPosture (double *);
-        void getSwingFootPosition (double *);
         void initJointAngles();
         int checkJointBounds();
-        void initSupportPosture (
-                const double,
-                const double,
-                const double,
-                const double,
-                const double,
-                const double);
-        void initSupportPosture (
-                const double,
-                const double,
-                const double,
-                const double);
-        void copySupportPosture (const modelState &);
+
+        double q[JOINTS_NUM];
 
 
-        double q[STATE_VAR_NUM];
-        igmSupportFoot support_foot;
+    private:
+        void initBounds();
+        void setBounds (const jointSensorIDs, const double, const double);
+
+        static double q_lower_bound[JOINTS_NUM];
+        static double q_upper_bound[JOINTS_NUM];
 };
 
 
@@ -100,13 +90,20 @@ class nao_igm
         void setFeetPostures (const double *, const double *);
         void getFeetPositions (double *, double *, double *, double *);
 
-        int igm (modelState &);
+        void getCoM (jointState&, double *);
+        void getSwingFootPosture (jointState&, Transform<double,3>&);
+        void getSwingFootPosition (jointState&, double *);
+
+        int igm (jointState&);
+        igmSupportFoot support_foot;
 
 
-        modelState state_model;
-        modelState state_sensor;
+        jointState state_model;
+        jointState state_sensor;
 
+        Transform<double,3> support_foot_posture;
         Transform<double,3> swing_foot_posture;
+
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
 };

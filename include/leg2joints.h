@@ -13,8 +13,8 @@
  ****************************************/
 
 extern "C" {
-  void LLeg2Joints(double *q, double *A);
-  void RLeg2Joints(double *q, double *A);
+    void LLeg2Joints(double *q,double *LL,double *A);
+    void RLeg2Joints(double *q,double *RL,double *A);
 }
 
 #endif //LEG2JOINTS_H

@@ -15,24 +15,16 @@ lib:
 	gcc $(CFLAGS) -c from_LLeg_3.c -o $(OBJ_DIR)/from_LLeg_3.o
 	gcc $(CFLAGS) -c from_RLeg_3.c -o $(OBJ_DIR)/from_RLeg_3.o
 
-	gcc $(CFLAGS) -c JacCoM.c -o $(OBJ_DIR)/JacCoM.o
-	gcc $(CFLAGS) -c JacCoM_a.c -o $(OBJ_DIR)/JacCoM_a.o
-
 	gcc $(CFLAGS) -c Leg2EE.c -o $(OBJ_DIR)/Leg2EE.o
 
 	g++ $(CXXFLAGS) -c igm.cpp -o $(OBJ_DIR)/igm.o $(INCLUDE_DIRS)
-	g++ $(CXXFLAGS) -c joint_bounds.cpp -o $(OBJ_DIR)/joint_bounds.o $(INCLUDE_DIRS)
-	g++ $(CXXFLAGS) -c model_state.cpp -o $(OBJ_DIR)/model_state.o $(INCLUDE_DIRS)
+	g++ $(CXXFLAGS) -c joint_state.cpp -o $(OBJ_DIR)/joint_state.o $(INCLUDE_DIRS)
 
 	$(AR) -r $(LIB_DIR)/libnaoigm.a \
 	$(OBJ_DIR)/from_LLeg_3.o \
 	$(OBJ_DIR)/from_RLeg_3.o \
-	$(OBJ_DIR)/JacCoM.o \
-	$(OBJ_DIR)/JacCoM_a.o \
 	$(OBJ_DIR)/Leg2EE.o \
-	$(OBJ_DIR)/joint_bounds.o \
-	$(OBJ_DIR)/model_state.o \
-	$(OBJ_DIR)/posture_orientation.o \
+	$(OBJ_DIR)/joint_state.o \
 	$(OBJ_DIR)/igm.o 
 
 leg2joints:

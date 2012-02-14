@@ -14,21 +14,22 @@
  ****************************************/
 
 extern "C" {
-  void from_LLeg_3(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
-  void from_RLeg_3(double *q, double *LetT, double *CoM, double *RotTorso, double *out);
+    void LLeg2RLeg(double *q,double *LL,double *T);
+    void LLeg2Torso(double *q,double *LL,double *T);
+    void LLeg2LHand(double *q,double *LL,double *T);
+    void LLeg2RHand(double *q,double *LL,double *T);
+    void LLeg2Head(double *q,double *LL,double *T);
+    void LLeg2CoM(double *q,double *LL,double *A);
+    void RLeg2LLeg(double *q,double *RL,double *T);
+    void RLeg2Torso(double *q,double *RL,double *T);
+    void RLeg2LHand(double *q,double *RL,double *T);
+    void RLeg2RHand(double *q,double *RL,double *T);
+    void RLeg2Head(double *q,double *RL,double *T);
+    void RLeg2CoM(double *q,double *RL,double *A);
 
-  void LLeg2RLeg(double *q,double *T);
-  void LLeg2LHand(double *q,double *T);
-  void LLeg2RHand(double *q,double *T);
-  void LLeg2Head(double *q,double *T);
-  void LLeg2Torso(double *q,double *T);
-  void LLeg2CoM(double *q,double *A);
-  void RLeg2LLeg(double *q,double *T);
-  void RLeg2LHand(double *q,double *T);
-  void RLeg2RHand(double *q,double *T);
-  void RLeg2Head(double *q,double *T);
-  void RLeg2Torso(double *q,double *T);
-  void RLeg2CoM(double *q,double *A);
+
+    void from_LLeg_3(double *q,double *LL,double *RL,double *CoM,double *Rot,double *A);
+    void from_RLeg_3(double *q,double *RL,double *LL,double *CoM,double *Rot,double *A);
 }
 
 #endif //MAPLE_FUNCTIONS_H

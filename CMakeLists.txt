@@ -26,9 +26,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/include")
 
 
 set (IGM_SRC_DIR "${PROJECT_SOURCE_DIR}/nao_model")
-set (IGM_SRC "${IGM_SRC_DIR}/JacCoM.c"
-             "${IGM_SRC_DIR}/JacCoM_a.c"
-             "${IGM_SRC_DIR}/Leg2EE.c"
+set (IGM_SRC "${IGM_SRC_DIR}/Leg2EE.c"
              "${IGM_SRC_DIR}/from_LLeg_3.c"
              "${IGM_SRC_DIR}/from_RLeg_3.c"
              "${IGM_SRC_DIR}/igm.cpp"
