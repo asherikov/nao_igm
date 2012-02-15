@@ -232,7 +232,7 @@ void nao_igm::getSwingFootPosture (jointState& joints, Transform<double,3>& swin
     search for a solution (i.e., the initial guess). On output q contains a solution of the
     inverse kinematics problem (if iter != -1). Only q[0]...q[11] are altered.
 */
-int nao_igm::igm(jointState &qstate)
+int nao_igm::igm()
 {
     const int num_constraints = LOWER_JOINTS_NUM-1; // one is skipped
 
@@ -254,7 +254,7 @@ int nao_igm::igm(jointState &qstate)
         if (support_foot == IGM_SUPPORT_LEFT)
         {
             from_LLeg_3 (
-                    qstate.q, 
+                    state_model.q, 
                     support_foot_posture.data(), 
                     swing_foot_posture.data(), 
                     CoM_position, 
@@ -264,7 +264,7 @@ int nao_igm::igm(jointState &qstate)
         else
         {
             from_RLeg_3 ( 
-                    qstate.q, 
+                    state_model.q, 
                     support_foot_posture.data(), 
                     swing_foot_posture.data(), 
                     CoM_position, 
@@ -278,7 +278,7 @@ int nao_igm::igm(jointState &qstate)
         dq = A.transpose()*err;
 
         // Update angles (of legs)
-        VectorXd::Map (qstate.q, LOWER_JOINTS_NUM) += dq;
+        VectorXd::Map (state_model.q, LOWER_JOINTS_NUM) += dq;
 
         // Compute the norm of dq
         norm_dq = dq.norm();

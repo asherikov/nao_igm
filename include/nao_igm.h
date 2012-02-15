@@ -79,7 +79,7 @@ class nao_igm
         void getCoM (jointState&, double *);
         void getSwingFootPosture (jointState&, Transform<double,3>&);
 
-        int igm (jointState&);
+        int igm ();
         igmSupportFoot support_foot;
 
 

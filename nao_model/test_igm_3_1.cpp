@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     for (int i=0 ; i<test_N ; i++)
     {
         nao.state_model = q0;
-        iter = nao.igm(nao.state_model);
+        iter = nao.igm();
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
