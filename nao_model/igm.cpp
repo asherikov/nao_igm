@@ -121,17 +121,16 @@ void nao_igm::init(
     Transform<double,3> torso_posture;
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(state_sensor.q, support_foot_posture.data(), swing_foot_posture.data());
         LLeg2Torso(state_sensor.q, support_foot_posture.data(), torso_posture.data());
-        LLeg2CoM(state_sensor.q, support_foot_posture.data(), CoM_position);
     }
     else
     {
-        RLeg2LLeg(state_sensor.q, support_foot_posture.data(), swing_foot_posture.data());
         RLeg2Torso(state_sensor.q, support_foot_posture.data(), torso_posture.data());
-        RLeg2CoM(state_sensor.q, support_foot_posture.data(), CoM_position);
     }
     Matrix3d::Map (torso_orientation) = torso_posture.matrix().corner(TopLeft,3,3);
+
+    getSwingFootPosture(state_sensor, swing_foot_posture);
+    getCoM (state_sensor, CoM_position);
 }
 
 
@@ -149,10 +148,6 @@ void nao_igm::switchSupportFoot(double *position_error)
 
     getSwingFootPosture (state_sensor, swing_foot_posture_sensor);
     Vector3d::Map(position_error) = swing_foot_posture.translation() - swing_foot_posture_sensor.translation();
-
-    swing_foot_posture = swing_foot_posture_sensor;
-    // reset z position
-    swing_foot_posture.translation()[2] = 0.0;
 
 
     if (support_foot == IGM_SUPPORT_LEFT)

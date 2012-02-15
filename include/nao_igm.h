@@ -72,11 +72,12 @@ class nao_igm
         void switchSupportFoot (double *);
         void setCoM (const double, const double, const double);
         void setFeetPostures (const double *, const double *);
+
         void getFeetPositions (double *, double *, double *, double *);
+        void getSwingFootPosition (jointState&, double *);
 
         void getCoM (jointState&, double *);
         void getSwingFootPosture (jointState&, Transform<double,3>&);
-        void getSwingFootPosition (jointState&, double *);
 
         int igm (jointState&);
         igmSupportFoot support_foot;
