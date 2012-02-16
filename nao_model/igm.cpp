@@ -7,39 +7,6 @@
 
 
 /**
- * @brief Set feet postures.
- *
- * @param[in] left_foot_position 3x1 vector of coordinates + yaw angle.
- * @param[in] right_foot_position 3x1 vector of coordinates + yaw angle.
- *
- * @note Roll and pitch angles are assumed to be 0.
- */
-void nao_igm::setFeetPostures (
-        const double *left_foot_position,
-        const double *right_foot_position)
-{
-    if (support_foot == IGM_SUPPORT_LEFT)
-    {
-        support_foot_posture = 
-            Translation<double,3>(left_foot_position[0], left_foot_position[1], left_foot_position[2]) *
-            AngleAxisd(left_foot_position[3], Vector3d::UnitZ());
-        swing_foot_posture = 
-            Translation<double,3>(right_foot_position[0], right_foot_position[1], right_foot_position[2]) *
-            AngleAxisd(right_foot_position[3], Vector3d::UnitZ());
-    }
-    else
-    {
-        support_foot_posture = 
-            Translation<double,3>(right_foot_position[0], right_foot_position[1], right_foot_position[2]) *
-            AngleAxisd(right_foot_position[3], Vector3d::UnitZ());
-        swing_foot_posture = 
-            Translation<double,3>(left_foot_position[0], left_foot_position[1], left_foot_position[2]) *
-            AngleAxisd(left_foot_position[3], Vector3d::UnitZ());
-    }
-}
-
-
-/**
  * @brief Get feet positions.
  *
  * @param[out] left_foot_expected 3x1 expected position vector
@@ -58,14 +25,14 @@ void nao_igm::getFeetPositions (
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_computed) = support_foot_posture.translation();
-        Vector3d::Map(right_foot_expected) = swing_foot_posture.translation();
+        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_computed) = left_foot_posture.translation();
+        Vector3d::Map(right_foot_expected) = right_foot_posture.translation();
         getSwingFootPosition (state_sensor, right_foot_computed);
     }
     else
     {
-        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = support_foot_posture.translation();
-        Vector3d::Map(left_foot_expected) = swing_foot_posture.translation();
+        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = right_foot_posture.translation();
+        Vector3d::Map(left_foot_expected) = right_foot_posture.translation();
         getSwingFootPosition (state_sensor, left_foot_computed);
     }
 }
@@ -109,11 +76,6 @@ void nao_igm::init(
         const double pitch, 
         const double yaw)
 {
-    support_foot_posture = 
-        Translation<double,3>(x, y, z) *
-        AngleAxisd(roll, Vector3d::UnitX()) *
-        AngleAxisd(pitch, Vector3d::UnitY()) *
-        AngleAxisd(yaw, Vector3d::UnitZ());
     support_foot = support_foot_;
     state_model = state_sensor;
 
@@ -121,15 +83,26 @@ void nao_igm::init(
     Transform<double,3> torso_posture;
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2Torso(state_sensor.q, support_foot_posture.data(), torso_posture.data());
+        left_foot_posture = 
+            Translation<double,3>(x, y, z) *
+            AngleAxisd(roll, Vector3d::UnitX()) *
+            AngleAxisd(pitch, Vector3d::UnitY()) *
+            AngleAxisd(yaw, Vector3d::UnitZ());
+        LLeg2Torso(state_sensor.q, left_foot_posture.data(), torso_posture.data());
+        getSwingFootPosture(state_sensor, right_foot_posture);
     }
     else
     {
-        RLeg2Torso(state_sensor.q, support_foot_posture.data(), torso_posture.data());
+        right_foot_posture = 
+            Translation<double,3>(x, y, z) *
+            AngleAxisd(roll, Vector3d::UnitX()) *
+            AngleAxisd(pitch, Vector3d::UnitY()) *
+            AngleAxisd(yaw, Vector3d::UnitZ());
+        RLeg2Torso(state_sensor.q, right_foot_posture.data(), torso_posture.data());
+        getSwingFootPosture(state_sensor, left_foot_posture);
     }
     Matrix3d::Map (torso_orientation) = torso_posture.matrix().corner(TopLeft,3,3);
 
-    getSwingFootPosture(state_sensor, swing_foot_posture);
     getCoM (state_sensor, CoM_position);
 }
 
@@ -138,28 +111,25 @@ void nao_igm::init(
 /**
  * @brief Switch support foot.
  *
- * @param[in] position_error 3x1 position error vector
- *
- * @attention The error along z axis is ignored.
+ * @return A 4x4 homogeneous matrix, which contains position and orientation 
+ * (computed using sensor data) of the new support foot.
  */
-void nao_igm::switchSupportFoot(double *position_error)
+double* nao_igm::switchSupportFoot()
 {
-    Transform<double,3> swing_foot_posture_sensor;
-
-    getSwingFootPosture (state_sensor, swing_foot_posture_sensor);
-    Vector3d::Map(position_error) = swing_foot_posture.translation() - swing_foot_posture_sensor.translation();
-
+    state_model = state_sensor;
 
     if (support_foot == IGM_SUPPORT_LEFT)
     {
+        getSwingFootPosture (state_sensor, right_foot_posture);
         support_foot = IGM_SUPPORT_RIGHT;
+        return (right_foot_posture.data());
     }
     else
     {
+        getSwingFootPosture (state_sensor, left_foot_posture);
         support_foot = IGM_SUPPORT_LEFT;
+        return (left_foot_posture.data());
     }
-
-    state_model = state_sensor;
 }
 
 
@@ -174,11 +144,11 @@ void nao_igm::getCoM (jointState& joints, double *CoM_pos)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2CoM(joints.q, support_foot_posture.data(), CoM_pos);
+        LLeg2CoM(joints.q, left_foot_posture.data(), CoM_pos);
     }
     else
     {
-        RLeg2CoM(joints.q, support_foot_posture.data(), CoM_pos);
+        RLeg2CoM(joints.q, right_foot_posture.data(), CoM_pos);
     }
 }
 
@@ -205,15 +175,15 @@ void nao_igm::getSwingFootPosition (jointState& joints, double * swing_foot_posi
  * @param[in] joints state of the joints.
  * @param[in,out] swing_foot_posture  homogeneous 4x4 matrix
  */
-void nao_igm::getSwingFootPosture (jointState& joints, Transform<double,3>& swing_foot_posture_tmp)
+void nao_igm::getSwingFootPosture (jointState& joints, Transform<double,3>& swing_foot_posture)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(joints.q, support_foot_posture.data(), swing_foot_posture_tmp.data());
+        LLeg2RLeg(joints.q, left_foot_posture.data(), swing_foot_posture.data());
     }
     else
     {
-        RLeg2LLeg(joints.q, support_foot_posture.data(), swing_foot_posture_tmp.data());
+        RLeg2LLeg(joints.q, right_foot_posture.data(), swing_foot_posture.data());
     }
 }
 
@@ -255,8 +225,8 @@ int nao_igm::igm()
         {
             from_LLeg_3 (
                     state_model.q, 
-                    support_foot_posture.data(), 
-                    swing_foot_posture.data(), 
+                    left_foot_posture.data(), 
+                    right_foot_posture.data(), 
                     CoM_position, 
                     torso_orientation, 
                     out);
@@ -265,8 +235,8 @@ int nao_igm::igm()
         {
             from_RLeg_3 ( 
                     state_model.q, 
-                    support_foot_posture.data(), 
-                    swing_foot_posture.data(), 
+                    right_foot_posture.data(), 
+                    left_foot_posture.data(), 
                     CoM_position, 
                     torso_orientation, 
                     out);
