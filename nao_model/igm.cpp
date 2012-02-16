@@ -93,12 +93,14 @@ void nao_igm::init(
         left_foot_posture = support_foot_posture;
         LLeg2Torso(state_sensor.q, left_foot_posture.data(), torso_posture.data());
         LLeg2RLeg(state_sensor.q, left_foot_posture.data(), right_foot_posture.data());
+        swing_foot_posture = right_foot_posture;
     }
     else
     {
         right_foot_posture = support_foot_posture;
         RLeg2Torso(state_sensor.q, right_foot_posture.data(), torso_posture.data());
         RLeg2LLeg(state_sensor.q, right_foot_posture.data(), left_foot_posture.data());
+        swing_foot_posture = left_foot_posture;
     }
     Matrix3d::Map (torso_orientation) = torso_posture.matrix().corner(TopLeft,3,3);
 

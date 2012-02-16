@@ -91,6 +91,8 @@ class nao_igm
 
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
+
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 #endif // NAO_IGM_H
