@@ -34,7 +34,7 @@ void nao_igm::getFeetPositions (
     else
     {
         Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = right_foot_posture.translation();
-        Vector3d::Map(left_foot_expected) = right_foot_posture.translation();
+        Vector3d::Map(left_foot_expected) = left_foot_posture.translation();
         getSwingFootPosition (state_sensor, left_foot_computed);
     }
 }
