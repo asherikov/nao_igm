@@ -76,7 +76,7 @@ class nao_igm
         void getSwingFootPosition (jointState&, double *);
 
         void getCoM (jointState&, double *);
-        void getSwingFootPosture (jointState&, Transform<double,3>&);
+        void getSwingFootPosture (jointState&);
 
         int igm ();
         igmSupportFoot support_foot;
@@ -87,6 +87,7 @@ class nao_igm
 
         Transform<double,3> left_foot_posture;
         Transform<double,3> right_foot_posture;
+        Transform<double,3> swing_foot_posture;
 
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
