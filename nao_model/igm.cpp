@@ -212,6 +212,12 @@ int nao_igm::igm()
 
     Matrix<double, num_constraints, num_constraints> AAT;
     Matrix<double, LOWER_JOINTS_NUM, 1> dq;
+    Matrix<double, LOWER_JOINTS_NUM, 1> iH; // inverted Hessian
+
+    iH.setConstant(1.0);
+    // joints can be penalized here:
+    //iH(L_HIP_ROLL) = 0.5;
+    //iH(R_HIP_ROLL) = 0.5;
 
     double out[num_constraints*LOWER_JOINTS_NUM + num_constraints];
     Map<MatrixXd> A(out,num_constraints,LOWER_JOINTS_NUM);
@@ -247,9 +253,9 @@ int nao_igm::igm()
         }
 
         // Solve KKT system
-        AAT = A*A.transpose();
+        AAT = A*iH.asDiagonal()*A.transpose();
         AAT.llt().solveInPlace(err);
-        dq = A.transpose()*err;
+        dq = iH.asDiagonal()*A.transpose()*err;
 
         // Update angles (of legs)
         VectorXd::Map (state_model.q, LOWER_JOINTS_NUM) += dq;
