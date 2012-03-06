@@ -36,8 +36,8 @@ int main(int argc, char** argv)
     q0 = nao.state_model;
 
 
-    nao.left_foot_posture = 
-        nao.left_foot_posture *
+    *nao.left_foot_posture = 
+        (*nao.left_foot_posture) *
         Translation<double,3>(-0.02,0.01,0.02) *
         AngleAxisd(0.1, Vector3d::UnitX()) *
         AngleAxisd(0.1, Vector3d::UnitY()) *

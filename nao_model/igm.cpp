@@ -5,6 +5,88 @@
 #include "maple_functions.h"
 
 
+/**
+ * @brief Constructor
+ */
+nao_igm::nao_igm()
+{
+    left_foot_posture  = new Transform<double,3>;
+    right_foot_posture = new Transform<double,3>;
+    swing_foot_posture = new Transform<double,3>;
+}
+
+
+/**
+ * @brief Copy constructor
+ *
+ * @param[in] copy_from an original instance of the class
+ */
+nao_igm::nao_igm(const nao_igm& copy_from) :
+    state_model (copy_from.state_model),
+    state_sensor (copy_from.state_sensor)
+{
+    support_foot = copy_from.support_foot;
+
+    left_foot_posture  = new Transform<double,3>(*copy_from.left_foot_posture );
+    right_foot_posture = new Transform<double,3>(*copy_from.right_foot_posture);
+    swing_foot_posture = new Transform<double,3>(*copy_from.swing_foot_posture);
+
+
+    for (int i = 0; i < ORIENTATION_MATRIX_SIZE; i++)
+    {
+        torso_orientation[i] = copy_from.torso_orientation[i];
+    }
+
+    for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
+    {
+        CoM_position[i] = copy_from.CoM_position[i];
+    }
+}
+
+
+
+/**
+ * @brief Assignment operator
+ *
+ * @param[in] copy_from an original instance of the class
+ */
+nao_igm& nao_igm::operator=(const nao_igm& copy_from) 
+{
+    support_foot = copy_from.support_foot;
+
+    state_model = copy_from.state_model;
+    state_sensor = copy_from.state_sensor;
+
+    *left_foot_posture  = *copy_from.left_foot_posture ;
+    *right_foot_posture = *copy_from.right_foot_posture;
+    *swing_foot_posture = *copy_from.swing_foot_posture;
+
+
+    for (int i = 0; i < ORIENTATION_MATRIX_SIZE; i++)
+    {
+        torso_orientation[i] = copy_from.torso_orientation[i];
+    }
+
+    for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
+    {
+        CoM_position[i] = copy_from.CoM_position[i];
+    }
+
+    return (*this);
+}
+
+
+/**
+ * @brief Destructor
+ */
+nao_igm::~nao_igm()
+{
+    delete left_foot_posture;
+    delete right_foot_posture;
+    delete swing_foot_posture;
+}
+
+
 
 /**
  * @brief Get feet positions.
@@ -27,14 +109,14 @@ void nao_igm::getFeetPositions (
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_computed) = left_foot_posture.translation();
-        Vector3d::Map(right_foot_expected) = right_foot_posture.translation();
+        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_computed) = left_foot_posture->translation();
+        Vector3d::Map(right_foot_expected) = right_foot_posture->translation();
         getSwingFootPosition (state_sensor, right_foot_computed);
     }
     else
     {
-        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = right_foot_posture.translation();
-        Vector3d::Map(left_foot_expected) = left_foot_posture.translation();
+        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = right_foot_posture->translation();
+        Vector3d::Map(left_foot_expected) = left_foot_posture->translation();
         getSwingFootPosition (state_sensor, left_foot_computed);
     }
 }
@@ -90,17 +172,17 @@ void nao_igm::init(
     Transform<double,3> torso_posture;
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        left_foot_posture = support_foot_posture;
-        LLeg2Torso(state_sensor.q, left_foot_posture.data(), torso_posture.data());
-        LLeg2RLeg(state_sensor.q, left_foot_posture.data(), right_foot_posture.data());
-        swing_foot_posture = right_foot_posture;
+        *left_foot_posture = support_foot_posture;
+        LLeg2Torso(state_sensor.q, left_foot_posture->data(), torso_posture.data());
+        LLeg2RLeg(state_sensor.q, left_foot_posture->data(), right_foot_posture->data());
+        *swing_foot_posture = *right_foot_posture;
     }
     else
     {
-        right_foot_posture = support_foot_posture;
-        RLeg2Torso(state_sensor.q, right_foot_posture.data(), torso_posture.data());
-        RLeg2LLeg(state_sensor.q, right_foot_posture.data(), left_foot_posture.data());
-        swing_foot_posture = left_foot_posture;
+        *right_foot_posture = support_foot_posture;
+        RLeg2Torso(state_sensor.q, right_foot_posture->data(), torso_posture.data());
+        RLeg2LLeg(state_sensor.q, right_foot_posture->data(), left_foot_posture->data());
+        *swing_foot_posture = *left_foot_posture;
     }
     Matrix3d::Map (torso_orientation) = torso_posture.matrix().corner(TopLeft,3,3);
 
@@ -131,7 +213,7 @@ double* nao_igm::switchSupportFoot()
         support_foot = IGM_SUPPORT_LEFT;
     }
 
-    return (swing_foot_posture.data());
+    return (swing_foot_posture->data());
 }
 
 
@@ -146,11 +228,11 @@ void nao_igm::getCoM (jointState& joints, double *CoM_pos)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2CoM(joints.q, left_foot_posture.data(), CoM_pos);
+        LLeg2CoM(joints.q, left_foot_posture->data(), CoM_pos);
     }
     else
     {
-        RLeg2CoM(joints.q, right_foot_posture.data(), CoM_pos);
+        RLeg2CoM(joints.q, right_foot_posture->data(), CoM_pos);
     }
 }
 
@@ -167,7 +249,7 @@ void nao_igm::getCoM (jointState& joints, double *CoM_pos)
 void nao_igm::getSwingFootPosition (jointState& joints, double * swing_foot_position)
 {
     getSwingFootPosture(joints);
-    Vector3d::Map(swing_foot_position) = swing_foot_posture.translation();
+    Vector3d::Map(swing_foot_position) = swing_foot_posture->translation();
 }
 
 
@@ -183,11 +265,11 @@ void nao_igm::getSwingFootPosture (jointState& joints)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(joints.q, left_foot_posture.data(), swing_foot_posture.data());
+        LLeg2RLeg(joints.q, left_foot_posture->data(), swing_foot_posture->data());
     }
     else
     {
-        RLeg2LLeg(joints.q, right_foot_posture.data(), swing_foot_posture.data());
+        RLeg2LLeg(joints.q, right_foot_posture->data(), swing_foot_posture->data());
     }
 }
 
@@ -197,20 +279,26 @@ void nao_igm::getSwingFootPosture (jointState& joints)
     Z(gamma)) of the foot not in support as well as (x, y, z) position of the CoM, and X(alpha),
     Y(beta) rotation of the torso can be imposed.
 
-    \return int iter - the number of iterations performed until convergence, or -1 if the algorithm
-    did not converge within max_iter number of iterations.
+    \return int iter - the number of iterations performed until convergence, or a negative number 
+    if the algorithm  did not converge within max_iter number of iterations.
 
     \note It is assumed that the leading matrix of the constraints is nonsingular.
 
     @note On input, the entries of q are the joint angles from where to start the
     search for a solution (i.e., the initial guess). On output q contains a solution of the
-    inverse kinematics problem (if iter != -1). Only q[0]...q[11] are altered.
+    inverse kinematics problem (if iter >= 0). Only q[0]...q[11] are altered.
 */
 int nao_igm::igm()
 {
     const int num_constraints = LOWER_JOINTS_NUM-1; // one is skipped
 
-    Matrix<double, num_constraints, num_constraints> AAT;
+    // Acc. to the reference: "32 x Hall effect sensors. 12 bit precision, ie 4096 values per turn"
+    // i.e. 3.14*2/4096 = 0.0015 radian is the lowest detectable change in a joint angle.
+    const double tol = 0.0015;
+    const int max_iter = 20;
+
+
+    Map< Matrix<double, LOWER_JOINTS_NUM, 1> > q(state_model.q);
     Matrix<double, LOWER_JOINTS_NUM, 1> dq;
     Matrix<double, LOWER_JOINTS_NUM, 1> iH; // inverted Hessian
 
@@ -219,12 +307,12 @@ int nao_igm::igm()
     //iH(L_HIP_ROLL) = 0.5;
     //iH(R_HIP_ROLL) = 0.5;
 
-    double out[num_constraints*LOWER_JOINTS_NUM + num_constraints];
-    Map<MatrixXd> A(out,num_constraints,LOWER_JOINTS_NUM);
-    Map<VectorXd> err(out+num_constraints*LOWER_JOINTS_NUM,num_constraints);
 
-    double tol = 0.0005;
-    int max_iter = 20;
+    double out[num_constraints*LOWER_JOINTS_NUM + num_constraints];
+    Map< Matrix<double, num_constraints, LOWER_JOINTS_NUM> > A(out);
+    Map< Matrix<double, num_constraints, 1> > err(out+num_constraints*LOWER_JOINTS_NUM);
+
+
     int iter;
     double norm_dq = 1.0;
 
@@ -235,8 +323,8 @@ int nao_igm::igm()
         {
             from_LLeg_3 (
                     state_model.q, 
-                    left_foot_posture.data(), 
-                    right_foot_posture.data(), 
+                    left_foot_posture->data(), 
+                    right_foot_posture->data(), 
                     CoM_position, 
                     torso_orientation, 
                     out);
@@ -245,23 +333,25 @@ int nao_igm::igm()
         {
             from_RLeg_3 ( 
                     state_model.q, 
-                    right_foot_posture.data(), 
-                    left_foot_posture.data(), 
+                    right_foot_posture->data(), 
+                    left_foot_posture->data(), 
                     CoM_position, 
                     torso_orientation, 
                     out);
         }
 
         // Solve KKT system
-        AAT = A*iH.asDiagonal()*A.transpose();
-        AAT.llt().solveInPlace(err);
-        dq = iH.asDiagonal()*A.transpose()*err;
+        /// @todo FP underflow occurs here, when compiled in debug mode.
+        ( A*iH.asDiagonal()*A.transpose() ).llt().solveInPlace(err);
+        dq = iH.asDiagonal()*A.transpose() * err;
 
         // Update angles (of legs)
-        VectorXd::Map (state_model.q, LOWER_JOINTS_NUM) += dq;
+        q += dq;
 
-        // Compute the norm of dq
-        norm_dq = dq.norm();
+        // Compute the infinity norm of dq
+        // (we want the absolute value of angle change to be detectable by 
+        // the corresponding sensor, see 'tol' variable above)
+        norm_dq = dq.lpNorm<Eigen::Infinity>();
     }
 
     if (iter > max_iter)

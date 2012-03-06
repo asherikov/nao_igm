@@ -59,6 +59,12 @@ class jointState
 class nao_igm 
 {
     public:
+        nao_igm();
+        nao_igm(const nao_igm&);
+        nao_igm& operator=(const nao_igm&);
+        ~nao_igm();
+
+
         void init (
                 const igmSupportFoot,
                 const double, 
@@ -85,14 +91,12 @@ class nao_igm
         jointState state_model;
         jointState state_sensor;
 
-        Transform<double,3> left_foot_posture;
-        Transform<double,3> right_foot_posture;
-        Transform<double,3> swing_foot_posture;
+        Transform<double,3>* left_foot_posture;
+        Transform<double,3>* right_foot_posture;
+        Transform<double,3>* swing_foot_posture;
 
         double torso_orientation[ORIENTATION_MATRIX_SIZE];
         double CoM_position[POSITION_VECTOR_SIZE];
-
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 #endif // NAO_IGM_H
