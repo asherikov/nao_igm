@@ -275,22 +275,29 @@ void nao_igm::getSwingFootPosture (jointState& joints)
 
 
 
-/** \brief Solves the Inverse Geometric Problem (IGM). Constraints for (x, y, z, X(alpha), Y(beta),
-    Z(gamma)) of the foot not in support as well as (x, y, z) position of the CoM, and X(alpha),
-    Y(beta) rotation of the torso can be imposed.
-
-    \return int iter - the number of iterations performed until convergence, or a negative number 
-    if the algorithm  did not converge within max_iter number of iterations.
-
-    \note It is assumed that the leading matrix of the constraints is nonsingular.
-
-    @note On input, the entries of q are the joint angles from where to start the
-    search for a solution (i.e., the initial guess). On output q contains a solution of the
-    inverse kinematics problem (if iter >= 0). Only q[0]...q[11] are altered.
+/** 
+ * @brief Solves the Inverse Geometric Problem (IGM).
+ *
+ * @return the number of iterations performed until convergence, or a negative number 
+ * if the algorithm did not converge within max_iter number of iterations.
+ *
+ * @note It is assumed that the leading matrix of the constraints is nonsingular.
+ *
+ * @note On input, model_state.q is taken as an initial guess for the joint angles,
+ * on output it contains a solution of the inverse kinematics problem (if iter >= 0). 
+ * Only the joints angles in the lower part of the body are altered.
 */
 int nao_igm::igm()
 {
-    const int num_constraints = LOWER_JOINTS_NUM-1; // one is skipped
+    /*
+     * Constraints:
+     *  - 3 on the position of the swing foot
+     *  - 3 on the orientation of the swing foot
+     *  - 3 on the position of the CoM
+     *  - 1 on the pitch angle of the torso
+     *  - 1 to take into account coupled joint L_HIP_YAW_PITCH / R_HIP_YAW_PITCH
+     */
+    const int num_constraints = 11;
 
     // Acc. to the reference: "32 x Hall effect sensors. 12 bit precision, ie 4096 values per turn"
     // i.e. 3.14*2/4096 = 0.0015 radian is the lowest detectable change in a joint angle.
