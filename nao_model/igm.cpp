@@ -31,12 +31,6 @@ nao_igm::nao_igm(const nao_igm& copy_from) :
     right_foot_posture = new Transform<double,3>(*copy_from.right_foot_posture);
     swing_foot_posture = new Transform<double,3>(*copy_from.swing_foot_posture);
 
-
-    for (int i = 0; i < ORIENTATION_MATRIX_SIZE; i++)
-    {
-        torso_orientation[i] = copy_from.torso_orientation[i];
-    }
-
     for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
     {
         CoM_position[i] = copy_from.CoM_position[i];
@@ -61,11 +55,6 @@ nao_igm& nao_igm::operator=(const nao_igm& copy_from)
     *right_foot_posture = *copy_from.right_foot_posture;
     *swing_foot_posture = *copy_from.swing_foot_posture;
 
-
-    for (int i = 0; i < ORIENTATION_MATRIX_SIZE; i++)
-    {
-        torso_orientation[i] = copy_from.torso_orientation[i];
-    }
 
     for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
     {
@@ -169,22 +158,18 @@ void nao_igm::init(
     state_model = state_sensor;
 
 
-    Transform<double,3> torso_posture;
     if (support_foot == IGM_SUPPORT_LEFT)
     {
         *left_foot_posture = support_foot_posture;
-        LLeg2Torso(state_sensor.q, left_foot_posture->data(), torso_posture.data());
         LLeg2RLeg(state_sensor.q, left_foot_posture->data(), right_foot_posture->data());
         *swing_foot_posture = *right_foot_posture;
     }
     else
     {
         *right_foot_posture = support_foot_posture;
-        RLeg2Torso(state_sensor.q, right_foot_posture->data(), torso_posture.data());
         RLeg2LLeg(state_sensor.q, right_foot_posture->data(), left_foot_posture->data());
         *swing_foot_posture = *left_foot_posture;
     }
-    Matrix3d::Map (torso_orientation) = torso_posture.matrix().corner(TopLeft,3,3);
 
     getCoM (state_sensor, CoM_position);
 }
@@ -278,6 +263,11 @@ void nao_igm::getSwingFootPosture (jointState& joints)
 /** 
  * @brief Solves the Inverse Geometric Problem (IGM).
  *
+ * @param[in] ref_angles LOWER_JOINTS_NUM reference joint angles
+ * @param[in] mu penalty for difference between solution and reference angles
+ * @param[in] tol tolerance
+ * @param[in] max_iter maximal number of iterations
+ *
  * @return the number of iterations performed until convergence, or a negative number 
  * if the algorithm did not converge within max_iter number of iterations.
  *
@@ -287,25 +277,24 @@ void nao_igm::getSwingFootPosture (jointState& joints)
  * on output it contains a solution of the inverse kinematics problem (if iter >= 0). 
  * Only the joints angles in the lower part of the body are altered.
 */
-int nao_igm::igm()
+int nao_igm::igm(
+        const double *ref_angles,
+        const double mu,
+        const double tol,
+        const int max_iter)
 {
     /*
      * Constraints:
      *  - 3 on the position of the swing foot
      *  - 3 on the orientation of the swing foot
      *  - 3 on the position of the CoM
-     *  - 1 on the pitch angle of the torso
      *  - 1 to take into account coupled joint L_HIP_YAW_PITCH / R_HIP_YAW_PITCH
      */
-    const int num_constraints = 11;
-
-    // Acc. to the reference: "32 x Hall effect sensors. 12 bit precision, ie 4096 values per turn"
-    // i.e. 3.14*2/4096 = 0.0015 radian is the lowest detectable change in a joint angle.
-    const double tol = 0.0015;
-    const int max_iter = 20;
+    const int num_constraints = 10;
 
 
     Map< Matrix<double, LOWER_JOINTS_NUM, 1> > q(state_model.q);
+    Map< Matrix<double, LOWER_JOINTS_NUM, 1> > q0(ref_angles);
     Matrix<double, LOWER_JOINTS_NUM, 1> dq;
     Matrix<double, LOWER_JOINTS_NUM, 1> iH; // inverted Hessian
 
@@ -333,7 +322,6 @@ int nao_igm::igm()
                     left_foot_posture->data(), 
                     right_foot_posture->data(), 
                     CoM_position, 
-                    torso_orientation, 
                     out);
         }
         else
@@ -343,14 +331,15 @@ int nao_igm::igm()
                     right_foot_posture->data(), 
                     left_foot_posture->data(), 
                     CoM_position, 
-                    torso_orientation, 
                     out);
         }
 
         // Solve KKT system
+        dq = mu*(q - q0);
+        err = -err - A*dq;
         /// @todo FP underflow occurs here, when compiled in debug mode.
         ( A*iH.asDiagonal()*A.transpose() ).llt().solveInPlace(err);
-        dq = iH.asDiagonal()*A.transpose() * err;
+        dq = - dq - iH.asDiagonal()*A.transpose() * err;
 
         // Update angles (of legs)
         q += dq;

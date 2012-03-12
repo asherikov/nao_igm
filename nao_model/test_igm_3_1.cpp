@@ -43,11 +43,6 @@ int main(int argc, char** argv)
         AngleAxisd(0.1, Vector3d::UnitY()) *
         AngleAxisd(0.1, Vector3d::UnitZ());
 
-    Matrix3d::Map(nao.torso_orientation) = Matrix3d::Map(nao.torso_orientation)
-                      * (AngleAxisd(0.1, Vector3d::UnitX())
-                      *  AngleAxisd(-0.1, Vector3d::UnitY())
-                      *  AngleAxisd(0.1, Vector3d::UnitZ())).toRotationMatrix();
-
     nao.CoM_position[0] += 0.03;
     nao.CoM_position[1] += 0.02;
     nao.CoM_position[2] -= 0.01;
@@ -58,7 +53,7 @@ int main(int argc, char** argv)
     for (int i=0 ; i<test_N ; i++)
     {
         nao.state_model = q0;
-        iter = nao.igm();
+        iter = nao.igm(q0.q, 1.2, 0.0015, 20);
     }
     gettimeofday(&end,0);
     cTime = end.tv_sec - start.tv_sec + 0.000001 * (end.tv_usec - start.tv_usec);
