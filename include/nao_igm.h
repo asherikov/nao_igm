@@ -64,7 +64,10 @@ class nao_igm
         ~nao_igm();
 
 
-        void init (const igmSupportFoot);
+        void init (
+                const igmSupportFoot,
+                const double, const double, const double,
+                const double, const double, const double);
 
         void switchSupportFoot (double *);
         void setCoM (const double, const double, const double);

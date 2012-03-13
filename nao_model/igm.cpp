@@ -127,16 +127,47 @@ void nao_igm::setCoM (const double x, const double y, const double z)
 
 
 
-/** @brief Initialize model.
-
-    @param[in] support_foot_ current support foot.
-
-    @attention Joint angles in state_sensor must be set.
-*/
-void nao_igm::init (const igmSupportFoot support_foot_)
+/** 
+ * @brief Initialize model.
+ *
+ * @param[in] support_foot_ current support foot.
+ * @param[in] x x coordinate of the support foot.
+ * @param[in] y y coordinate of the support foot.
+ * @param[in] z z coordinate of the support foot.
+ * @param[in] roll roll angle of the support foot.
+ * @param[in] pitch pitch angle of the support foot.
+ * @param[in] yaw yaw angle of the support foot.
+ *
+ * @attention Joint angles in state_sensor must be set.
+ */
+void nao_igm::init (
+        const igmSupportFoot support_foot_,
+        const double x,
+        const double y,
+        const double z,
+        const double roll,
+        const double pitch,
+        const double yaw)
 {
     support_foot = support_foot_;
     state_model = state_sensor;
+
+    if (support_foot == IGM_SUPPORT_LEFT)
+    {
+        *left_foot_posture = 
+                Translation<double,3>(x, y, z) *
+                AngleAxisd(roll, Vector3d::UnitX()) *
+                AngleAxisd(pitch, Vector3d::UnitY()) *
+                AngleAxisd(yaw, Vector3d::UnitZ());
+    }
+    else
+    {
+        *right_foot_posture = 
+                Translation<double,3>(x, y, z) *
+                AngleAxisd(roll, Vector3d::UnitX()) *
+                AngleAxisd(pitch, Vector3d::UnitY()) *
+                AngleAxisd(yaw, Vector3d::UnitZ());
+    }
 }
 
 
