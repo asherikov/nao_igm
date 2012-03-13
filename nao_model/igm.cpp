@@ -242,7 +242,7 @@ int nao_igm::igm(
         // Solve KKT system
         dq = mu*(q - q0);
         err = -err - A*dq;
-        /// @todo FP underflow occurs here, when compiled in debug mode.
+        /// @todo FP underflow occurs in solveInPlace().
         (A*iH.asDiagonal()*A.transpose()).llt().solveInPlace(err);
         dq = -dq - iH.asDiagonal()*A.transpose() * err;
         // Update angles (of legs)
