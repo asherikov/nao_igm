@@ -30,11 +30,16 @@ int main(int argc, char** argv)
     // set initial configuration
     jointState q0;
 
-    nao.init (IGM_SUPPORT_RIGHT, 
-              0.0, 0.05, 0.0, 
-              0.0, 0.0, 0.0);
+    nao.init (IGM_SUPPORT_RIGHT);
     q0 = nao.state_model;
 
+    *nao.right_foot_posture =
+        Translation<double,3>(0.0, 0.05, 0.0) *
+        AngleAxisd(0.0, Vector3d::UnitX()) *
+        AngleAxisd(0.0, Vector3d::UnitY()) *
+        AngleAxisd(0.0, Vector3d::UnitZ());
+
+    nao.getSwingFootPosture (nao.state_sensor, nao.left_foot_posture->data());
 
     *nao.left_foot_posture = 
         (*nao.left_foot_posture) *
@@ -43,6 +48,7 @@ int main(int argc, char** argv)
         AngleAxisd(0.1, Vector3d::UnitY()) *
         AngleAxisd(0.1, Vector3d::UnitZ());
 
+    nao.getCoM (nao.state_sensor, nao.CoM_position);
     nao.CoM_position[0] += 0.03;
     nao.CoM_position[1] += 0.02;
     nao.CoM_position[2] -= 0.01;

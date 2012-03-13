@@ -30,7 +30,6 @@ enum igmSupportFoot {
 };
 
 
-#define ORIENTATION_MATRIX_SIZE 3*3
 #define POSITION_VECTOR_SIZE 3
 
 
@@ -65,30 +64,17 @@ class nao_igm
         ~nao_igm();
 
 
-        void init (
-                const igmSupportFoot,
-                const double, 
-                const double, 
-                const double, 
-                const double, 
-                const double, 
-                const double);
+        void init (const igmSupportFoot);
 
-
-        double* switchSupportFoot ();
+        void switchSupportFoot (double *);
         void setCoM (const double, const double, const double);
 
         void getFeetPositions (double *, double *, double *, double *);
-        void getSwingFootPosition (jointState&, double *);
 
         void getCoM (jointState&, double *);
-        void getSwingFootPosture (jointState&);
+        void getSwingFootPosture (jointState&, double *);
 
-        int igm (
-                const double*,
-                const double,
-                const double,
-                const int);
+        int igm (const double*, const double, const double, const int);
 
 
 
@@ -99,7 +85,6 @@ class nao_igm
 
         Transform<double,3>* left_foot_posture;
         Transform<double,3>* right_foot_posture;
-        Transform<double,3>* swing_foot_posture;
 
         double CoM_position[POSITION_VECTOR_SIZE];
 };

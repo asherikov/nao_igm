@@ -12,7 +12,6 @@ nao_igm::nao_igm()
 {
     left_foot_posture  = new Transform<double,3>;
     right_foot_posture = new Transform<double,3>;
-    swing_foot_posture = new Transform<double,3>;
 }
 
 
@@ -29,7 +28,6 @@ nao_igm::nao_igm(const nao_igm& copy_from) :
 
     left_foot_posture  = new Transform<double,3>(*copy_from.left_foot_posture );
     right_foot_posture = new Transform<double,3>(*copy_from.right_foot_posture);
-    swing_foot_posture = new Transform<double,3>(*copy_from.swing_foot_posture);
 
     for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
     {
@@ -53,8 +51,6 @@ nao_igm& nao_igm::operator=(const nao_igm& copy_from)
 
     *left_foot_posture  = *copy_from.left_foot_posture ;
     *right_foot_posture = *copy_from.right_foot_posture;
-    *swing_foot_posture = *copy_from.swing_foot_posture;
-
 
     for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
     {
@@ -72,7 +68,6 @@ nao_igm::~nao_igm()
 {
     delete left_foot_posture;
     delete right_foot_posture;
-    delete swing_foot_posture;
 }
 
 
@@ -87,8 +82,6 @@ nao_igm::~nao_igm()
  *
  * @note Support foot position is assumed to be correct and there is no difference
  * between the expected and 'real' positions.
- *
- * @note swing_foot_posture member is updated.
  */
 void nao_igm::getFeetPositions (
         double *left_foot_expected,
@@ -96,17 +89,23 @@ void nao_igm::getFeetPositions (
         double *left_foot_computed,
         double *right_foot_computed)
 {
+    Transform<double, 3> swing_foot_posture;
+    getSwingFootPosture (state_sensor, swing_foot_posture.data());
+
+
+    Vector3d::Map(left_foot_expected) = left_foot_posture->translation();
+    Vector3d::Map(right_foot_expected) = right_foot_posture->translation();
+
+
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        Vector3d::Map(left_foot_expected) = Vector3d::Map(left_foot_computed) = left_foot_posture->translation();
-        Vector3d::Map(right_foot_expected) = right_foot_posture->translation();
-        getSwingFootPosition (state_sensor, right_foot_computed);
+        Vector3d::Map(left_foot_computed) = left_foot_posture->translation();
+        Vector3d::Map(right_foot_computed) = swing_foot_posture.translation();
     }
     else
     {
-        Vector3d::Map(right_foot_expected) = Vector3d::Map(right_foot_computed) = right_foot_posture->translation();
-        Vector3d::Map(left_foot_expected) = left_foot_posture->translation();
-        getSwingFootPosition (state_sensor, left_foot_computed);
+        Vector3d::Map(right_foot_computed) = right_foot_posture->translation();
+        Vector3d::Map(left_foot_computed) = swing_foot_posture.translation();
     }
 }
 
@@ -131,47 +130,13 @@ void nao_igm::setCoM (const double x, const double y, const double z)
 /** @brief Initialize model.
 
     @param[in] support_foot_ current support foot.
-    @param[in] x x-position
-    @param[in] y y-position
-    @param[in] z z-position
-    @param[in] roll x-rotation
-    @param[in] pitch y-rotation
-    @param[in] yaw z-rotation
 
     @attention Joint angles in state_sensor must be set.
 */
-void nao_igm::init(
-        const igmSupportFoot support_foot_, 
-        const double x, 
-        const double y, 
-        const double z, 
-        const double roll, 
-        const double pitch, 
-        const double yaw)
+void nao_igm::init (const igmSupportFoot support_foot_)
 {
-    Transform <double, 3> support_foot_posture =
-            Translation<double,3>(x, y, z) *
-            AngleAxisd(roll, Vector3d::UnitX()) *
-            AngleAxisd(pitch, Vector3d::UnitY()) *
-            AngleAxisd(yaw, Vector3d::UnitZ());
     support_foot = support_foot_;
     state_model = state_sensor;
-
-
-    if (support_foot == IGM_SUPPORT_LEFT)
-    {
-        *left_foot_posture = support_foot_posture;
-        LLeg2RLeg(state_sensor.q, left_foot_posture->data(), right_foot_posture->data());
-        *swing_foot_posture = *right_foot_posture;
-    }
-    else
-    {
-        *right_foot_posture = support_foot_posture;
-        RLeg2LLeg(state_sensor.q, right_foot_posture->data(), left_foot_posture->data());
-        *swing_foot_posture = *left_foot_posture;
-    }
-
-    getCoM (state_sensor, CoM_position);
 }
 
 
@@ -179,14 +144,12 @@ void nao_igm::init(
 /**
  * @brief Switch support foot.
  *
- * @return A 4x4 homogeneous matrix, which contains position and orientation 
- * (computed using sensor data) of the new support foot.
- *
- * @note swing_foot_posture member is updated.
+ * @param[in,out] A 4x4 homogeneous matrix, which contains position and 
+ * orientation (computed using sensor data) of the new support foot.
  */
-double* nao_igm::switchSupportFoot()
+void nao_igm::switchSupportFoot(double * swing_foot_posture)
 {
-    getSwingFootPosture (state_sensor);
+    getSwingFootPosture (state_sensor, swing_foot_posture);
     state_model = state_sensor;
 
     if (support_foot == IGM_SUPPORT_LEFT)
@@ -197,8 +160,6 @@ double* nao_igm::switchSupportFoot()
     {
         support_foot = IGM_SUPPORT_LEFT;
     }
-
-    return (swing_foot_posture->data());
 }
 
 
@@ -227,34 +188,17 @@ void nao_igm::getCoM (jointState& joints, double *CoM_pos)
  * @brief Compute position of the swing foot from joint angles.
  *
  * @param[in] joints state of the joints.
- * @param[in,out] swing_foot_position  3x1 vector of coordinates.
- *
- * @note swing_foot_posture member is updated.
+ * @param[in,out] swing_foot_posture 4x4 homogeneous matrix
  */
-void nao_igm::getSwingFootPosition (jointState& joints, double * swing_foot_position)
-{
-    getSwingFootPosture(joints);
-    Vector3d::Map(swing_foot_position) = swing_foot_posture->translation();
-}
-
-
-
-/**
- * @brief Compute position of the swing foot from joint angles.
- *
- * @param[in] joints state of the joints.
- *
- * @note swing_foot_posture member is updated.
- */
-void nao_igm::getSwingFootPosture (jointState& joints)
+void nao_igm::getSwingFootPosture (jointState& joints, double *swing_foot_posture)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(joints.q, left_foot_posture->data(), swing_foot_posture->data());
+        LLeg2RLeg(joints.q, left_foot_posture->data(), swing_foot_posture);
     }
     else
     {
-        RLeg2LLeg(joints.q, right_foot_posture->data(), swing_foot_posture->data());
+        RLeg2LLeg(joints.q, right_foot_posture->data(), swing_foot_posture);
     }
 }
 

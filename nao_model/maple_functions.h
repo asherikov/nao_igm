@@ -15,14 +15,8 @@
 
 extern "C" {
     void LLeg2RLeg(double *q,double *LL,double *T);
-    void LLeg2LHand(double *q,double *LL,double *T);
-    void LLeg2RHand(double *q,double *LL,double *T);
-    void LLeg2Head(double *q,double *LL,double *T);
     void LLeg2CoM(double *q,double *LL,double *A);
     void RLeg2LLeg(double *q,double *RL,double *T);
-    void RLeg2LHand(double *q,double *RL,double *T);
-    void RLeg2RHand(double *q,double *RL,double *T);
-    void RLeg2Head(double *q,double *RL,double *T);
     void RLeg2CoM(double *q,double *RL,double *A);
 
 
