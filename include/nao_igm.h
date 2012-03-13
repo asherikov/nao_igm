@@ -12,6 +12,9 @@
  * INCLUDES 
  ****************************************/
 
+#define EIGEN_DONT_VECTORIZE
+#define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+
 #include <Eigen/Geometry>
 #include "joints_sensors_id.h"
 
@@ -58,12 +61,6 @@ class jointState
 class nao_igm 
 {
     public:
-        nao_igm();
-        nao_igm(const nao_igm&);
-        nao_igm& operator=(const nao_igm&);
-        ~nao_igm();
-
-
         void init (
                 const igmSupportFoot,
                 const double, const double, const double,
@@ -86,8 +83,8 @@ class nao_igm
         jointState state_model;
         jointState state_sensor;
 
-        Transform<double,3>* left_foot_posture;
-        Transform<double,3>* right_foot_posture;
+        Transform<double,3> left_foot_posture;
+        Transform<double,3> right_foot_posture;
 
         double CoM_position[POSITION_VECTOR_SIZE];
 };

@@ -5,72 +5,6 @@
 #include "maple_functions.h"
 
 
-/**
- * @brief Constructor
- */
-nao_igm::nao_igm()
-{
-    left_foot_posture  = new Transform<double,3>;
-    right_foot_posture = new Transform<double,3>;
-}
-
-
-/**
- * @brief Copy constructor
- *
- * @param[in] copy_from an original instance of the class
- */
-nao_igm::nao_igm(const nao_igm& copy_from) :
-    state_model (copy_from.state_model),
-    state_sensor (copy_from.state_sensor)
-{
-    support_foot = copy_from.support_foot;
-
-    left_foot_posture  = new Transform<double,3>(*copy_from.left_foot_posture );
-    right_foot_posture = new Transform<double,3>(*copy_from.right_foot_posture);
-
-    for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
-    {
-        CoM_position[i] = copy_from.CoM_position[i];
-    }
-}
-
-
-
-/**
- * @brief Assignment operator
- *
- * @param[in] copy_from an original instance of the class
- */
-nao_igm& nao_igm::operator=(const nao_igm& copy_from) 
-{
-    support_foot = copy_from.support_foot;
-
-    state_model = copy_from.state_model;
-    state_sensor = copy_from.state_sensor;
-
-    *left_foot_posture  = *copy_from.left_foot_posture ;
-    *right_foot_posture = *copy_from.right_foot_posture;
-
-    for (int i = 0; i < POSITION_VECTOR_SIZE; i++)
-    {
-        CoM_position[i] = copy_from.CoM_position[i];
-    }
-
-    return (*this);
-}
-
-
-/**
- * @brief Destructor
- */
-nao_igm::~nao_igm()
-{
-    delete left_foot_posture;
-    delete right_foot_posture;
-}
-
-
 
 /**
  * @brief Get feet positions.
@@ -93,18 +27,18 @@ void nao_igm::getFeetPositions (
     getSwingFootPosture (state_sensor, swing_foot_posture.data());
 
 
-    Vector3d::Map(left_foot_expected) = left_foot_posture->translation();
-    Vector3d::Map(right_foot_expected) = right_foot_posture->translation();
+    Vector3d::Map(left_foot_expected) = left_foot_posture.translation();
+    Vector3d::Map(right_foot_expected) = right_foot_posture.translation();
 
 
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        Vector3d::Map(left_foot_computed) = left_foot_posture->translation();
+        Vector3d::Map(left_foot_computed) = left_foot_posture.translation();
         Vector3d::Map(right_foot_computed) = swing_foot_posture.translation();
     }
     else
     {
-        Vector3d::Map(right_foot_computed) = right_foot_posture->translation();
+        Vector3d::Map(right_foot_computed) = right_foot_posture.translation();
         Vector3d::Map(left_foot_computed) = swing_foot_posture.translation();
     }
 }
@@ -154,7 +88,7 @@ void nao_igm::init (
 
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        *left_foot_posture = 
+        left_foot_posture = 
                 Translation<double,3>(x, y, z) *
                 AngleAxisd(roll, Vector3d::UnitX()) *
                 AngleAxisd(pitch, Vector3d::UnitY()) *
@@ -162,7 +96,7 @@ void nao_igm::init (
     }
     else
     {
-        *right_foot_posture = 
+        right_foot_posture = 
                 Translation<double,3>(x, y, z) *
                 AngleAxisd(roll, Vector3d::UnitX()) *
                 AngleAxisd(pitch, Vector3d::UnitY()) *
@@ -201,11 +135,11 @@ void nao_igm::getCoM (jointState& joints, double *CoM_pos)
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2CoM(joints.q, left_foot_posture->data(), CoM_pos);
+        LLeg2CoM(joints.q, left_foot_posture.data(), CoM_pos);
     }
     else
     {
-        RLeg2CoM(joints.q, right_foot_posture->data(), CoM_pos);
+        RLeg2CoM(joints.q, right_foot_posture.data(), CoM_pos);
     }
 }
 
@@ -221,11 +155,11 @@ void nao_igm::getSwingFootPosture (jointState& joints, double *swing_foot_postur
 {
     if (support_foot == IGM_SUPPORT_LEFT)
     {
-        LLeg2RLeg(joints.q, left_foot_posture->data(), swing_foot_posture);
+        LLeg2RLeg(joints.q, left_foot_posture.data(), swing_foot_posture);
     }
     else
     {
-        RLeg2LLeg(joints.q, right_foot_posture->data(), swing_foot_posture);
+        RLeg2LLeg(joints.q, right_foot_posture.data(), swing_foot_posture);
     }
 }
 
@@ -277,7 +211,7 @@ int nao_igm::igm(
 
     double out[num_constraints*LOWER_JOINTS_NUM + num_constraints];
     Map< Matrix<double, num_constraints, LOWER_JOINTS_NUM> > A(out);
-    Map< Matrix<double, num_constraints, 1> > err(out+num_constraints*LOWER_JOINTS_NUM);
+    Map< Matrix<double, num_constraints, 1> > err(out + num_constraints*LOWER_JOINTS_NUM);
 
 
     int iter;
@@ -290,8 +224,8 @@ int nao_igm::igm(
         {
             from_LLeg_3 (
                     state_model.q, 
-                    left_foot_posture->data(), 
-                    right_foot_posture->data(), 
+                    left_foot_posture.data(), 
+                    right_foot_posture.data(), 
                     CoM_position, 
                     out);
         }
@@ -299,8 +233,8 @@ int nao_igm::igm(
         {
             from_RLeg_3 ( 
                     state_model.q, 
-                    right_foot_posture->data(), 
-                    left_foot_posture->data(), 
+                    right_foot_posture.data(), 
+                    left_foot_posture.data(), 
                     CoM_position, 
                     out);
         }
@@ -309,9 +243,8 @@ int nao_igm::igm(
         dq = mu*(q - q0);
         err = -err - A*dq;
         /// @todo FP underflow occurs here, when compiled in debug mode.
-        ( A*iH.asDiagonal()*A.transpose() ).llt().solveInPlace(err);
-        dq = - dq - iH.asDiagonal()*A.transpose() * err;
-
+        (A*iH.asDiagonal()*A.transpose()).llt().solveInPlace(err);
+        dq = -dq - iH.asDiagonal()*A.transpose() * err;
         // Update angles (of legs)
         q += dq;
 
