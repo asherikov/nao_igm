@@ -8,9 +8,6 @@
 #ifndef MAPLE_FUNCTIONS_H
 #define MAPLE_FUNCTIONS_H
 
-
-#include "public_maple_functions.h"
-
 /****************************************
  * PROTOTYPES 
  ****************************************/
@@ -40,5 +37,18 @@ extern "C" {
   void RLeg2CoM(double *q,double *A);
 }
 
-#endif //MAPLE_FUNCTIONS_H
 
+
+extern "C" {
+  void LLeg2Joints(double *q, double *A);
+  void RLeg2Joints(double *q, double *A);
+}
+
+
+extern "C" {
+  void Euler2T(double x, double y, double z, double X, double Y, double Z, double *T);
+  void Euler2Rot(double X, double Y, double Z, double *Rot);
+}
+
+
+#endif //MAPLE_FUNCTIONS_H
