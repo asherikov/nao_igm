@@ -69,7 +69,7 @@ class nao_igm
                 const double, const double, const double,
                 const double, const double, const double);
 
-        void switchSupportFoot (double *new_support_foot_posture = NULL);
+        void switchSupportFoot ();
         void setCoM (const double, const double, const double);
 
         void getFeetPositions (double *, double *, double *, double *);

@@ -174,17 +174,9 @@ void nao_igm::init (
 
 /**
  * @brief Switch support foot.
- *
- * @param[in,out] A 4x4 homogeneous matrix, which contains position and 
- * orientation (computed using sensor data) of the new support foot. Can
- * be NULL.
  */
-void nao_igm::switchSupportFoot(double * new_support_foot_posture)
+void nao_igm::switchSupportFoot()
 {
-    if (new_support_foot_posture != NULL)
-    {
-        getSwingFootPosture (state_sensor, new_support_foot_posture);
-    }
     state_model = state_sensor;
 
     if (support_foot == IGM_SUPPORT_LEFT)
