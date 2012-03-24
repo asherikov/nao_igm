@@ -3,9 +3,9 @@
 
 ## Requirements
 
-    * Eigen  = v. 2
-    * cmake >= v. 2.6
-    * GNU make
+* Eigen  = v. 2
+* cmake >= v. 2.6
+* GNU make
 
 
 
@@ -36,8 +36,11 @@ angles is penalized.
 
 Note, that there are other versions of igm() function, the respective 
 source files are kept in a separate branch: 
+
 >   <https://github.com/asherikov/nao_igm/tree/MapleGeneratedFunctions>
+
 The features of different versions are described in file 
+
 >   ./maple_sources/Readme_M.txt
 
 
@@ -45,6 +48,9 @@ The features of different versions are described in file
 ## Compilation
 
 The following command compiles the library:
+
 >   "make cmake"
+
 Toolchain can be specified in the folowing way:
+
 >   "make cmake TOOLCHAIN=<path_to_a_toolchain>"
