@@ -53,4 +53,4 @@ The following command compiles the library:
 
 Toolchain can be specified in the folowing way:
 
->   "make cmake TOOLCHAIN=<path_to_a_toolchain>"
+>   "make cmake TOOLCHAIN=< path to a toolchain >"
