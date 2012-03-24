@@ -1,15 +1,15 @@
 Inverse geometrical model for Nao.
 
 
-h3. Requirements
+h2. Requirements
 
-    Eigen  = v. 2
-    cmake >= v. 2.6
-    GNU make
+    * Eigen  = v. 2
+    * cmake >= v. 2.6
+    * GNU make
 
 
 
-h.3 Overview
+h2. Overview
 
 The features of the currently used version of IGM are:
 
@@ -22,11 +22,10 @@ The features of the currently used version of IGM are:
     * Only the joint angles of the lower body part are controlled, 
         others remain constant.
     * The following constraints are imposed:
-        * 3 on the position of the swing foot
-        * 3 on the orientation of the swing foot
-        * 3 on the position of the CoM
-        * 1 to take into account the coupled joint 
-          L_HIP_YAW_PITCH / R_HIP_YAW_PITCH
+        ** 3 on the position of the swing foot
+        ** 3 on the orientation of the swing foot
+        ** 3 on the position of the CoM
+        ** 1 to take into account the coupled joint L_HIP_YAW_PITCH / R_HIP_YAW_PITCH
     * To support a steady walk, the deviation from given reference 
         angles is penalized.
 
@@ -39,9 +38,9 @@ The features of different versions are described in file
 
 
 
-h.3 Compilation
+h2. Compilation
 
 The following command compiles the library:
-    'make cmake'
+bq. "make cmake"
 Toolchain can be specified in the folowing way:
-    'make cmake TOOLCHAIN=<path_to_a_toolchain>'
+bq. "make cmake TOOLCHAIN=<path_to_a_toolchain>"
